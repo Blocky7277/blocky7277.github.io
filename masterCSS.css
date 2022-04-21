@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Caveat&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Rubik:700&display=swap');
+
+
+body{
+    background: #1a1e24;
+    color: whitesmoke;
+    font-family: Noto Sans;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0px;
+}
+
+canvas{
+    display: flex;
+    background: whitesmoke;
+    border: .5em solid #8b8b8b;
+}
