@@ -30,7 +30,7 @@ var newkeys = [];
 //Game States 0: title screen, 1: settings, 2: instructions, 3: playing -1: lose, 3: win, .5: pause,
 var gameState = 0;
 
-var player = new char1(1, 1, 100, 100, 100, './sprites/adventurerSprites.png')
+var player = new char1(1, 1, 100, './sprites/adventurerSprites.png')
 console.log(player)
 
 var wasdKeys = [65, 68]
