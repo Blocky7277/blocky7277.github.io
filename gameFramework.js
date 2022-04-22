@@ -5,7 +5,7 @@ export const ctx = c.getContext("2d");
 const cWidth = c.width; 
 const cHeight = c.height;
 
-import { char1 } from "./characters.js";
+import { wizard } from "./characters.js";
 
 //Classes for the game
 export class character{
@@ -29,8 +29,10 @@ var newkeys = [];
 
 //Game States 0: title screen, 1: settings, 2: instructions, 3: playing -1: lose, 3: win, .5: pause,
 var gameState = 0;
+export var gameFrame = 0;
 
-var player = new char1(1, 1, 100, './sprites/adventurerSprites.png')
+
+var player = new wizard(0, 0, 100, './sprites/wizard')
 console.log(player)
 
 var wasdKeys = [65, 68]
@@ -51,7 +53,7 @@ function initialize(){
 
 function gameUpdate() {
     //GAME UPDATE LOGIC
-
+    gameFrame++
 
     //Don't modify the code below
     gameDraw();
