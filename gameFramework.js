@@ -61,7 +61,6 @@ function gameUpdate() {
     gameFrame++
 
     player.update()
-    // player.colliderUpdate()
 
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
@@ -80,16 +79,20 @@ function gameDraw(){
     
 }
 
-export function movementAndAttackHandler() {
+export function movementHandler() {
     if(curkeys[key_codes.right]){
+        if(player.attacking && !player.jumping) return;
         player.moveRight()
+        if(player.attacking) return;
         player.img.src = player.imgPath+'/Run.png';
         if(newkeys[key_codes.right]){
             player.charFrame = 0;
             player.totalFrames = 7;}
     }
     if(curkeys[key_codes.left]){
+        if(player.attacking && !player.jumping) return;
         player.moveLeft()
+        if(player.attacking) return;
         player.img.src = player.imgPath+'/Run.png';
         if(newkeys[key_codes.right]){
             player.charFrame = 0;
@@ -99,6 +102,9 @@ export function movementAndAttackHandler() {
     if(newkeys[key_codes.jump]) { // Jump Button
         player.jump()
     } 
+}
+
+export function attackHandler(){
     if(newkeys[key_codes.attack_1]) { // Attack 1 Button
         player.attack1()
     }

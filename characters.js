@@ -1,4 +1,4 @@
-import {ctx, gameFrame, movementAndAttackHandler } from "./gameFramework.js";
+import {attackHandler, ctx, gameFrame, movementHandler } from "./gameFramework.js";
 
 const staggerFrame = 15
 
@@ -21,6 +21,7 @@ class character{
         this.spriteHeight = spriteHeight;
         this.jumping = true;
         this.attacking = false;
+        this.idle
         this.moving = 0; // 0 none, 1 right, -1 left Only counts for player movement
         this.direction = 0; // 1 right, -1 left
         this.moveinc = moveinc;
@@ -34,12 +35,14 @@ class character{
         if(this.vel.x > -this.moveinc) this.vel.x -=.3;
         this.moving = -1;
         this.direction = -1;
+        this.idle = false;
     }
     
     moveRight() {
         if(this.vel.x < this.moveinc) this.vel.x +=.3;
         this.moving = 1;
         this.direction = 1;
+        this.idle = false;
     }
 }
 
@@ -57,22 +60,17 @@ export class wizard extends character {
 
     update(){
         this.physUpdate()
-        movementAndAttackHandler()
-        if(this.vel.y > 0) {
-            this.img.src = this.imgPath+'/Fall.png'
-            this.totalFrames = 1;
-        }
-        if(this.vel.y < 0) {
-            this.img.src = this.imgPath+'/Jump.png'
-            this.totalFrames = 1;
-        }
+        movementHandler()
+        this.jumpAnimations()
+        attackHandler()
         this.colliderUpdate()
     }
 
     draw(){
+        //Collider
+        // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
-            //Collider
-            // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+            //This all essentially flips the image
             ctx.translate(this.x+this.spriteWidth,this.y);
 
             // scaleX by -1; this "trick" flips horizontally
@@ -85,17 +83,22 @@ export class wizard extends character {
             // always clean up -- reset transformations to default
             ctx.setTransform(1,0,0,1,0,0);
         }
+
         else{
-            //Displays Hitbox
-            // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
             // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, ImageX, ImageY, Image Width, Image Height
             ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 300, 300);
         }
-        if (this.moving == 0){
+
+        //Eveything below handles a majority of the animation logic
+        if (this.moving == 0 && !this.idle && !this.attacking){
             this.img.src = this.imgPath+'/Idle.png'
             this.moving = false;
+            this.idle = true
         }
+
+        //Staggers the frames so the animations don't play too fast
         if(gameFrame % staggerFrame != 0) return;
+        //Animates next frame if there is another frame otherwise start over from first frame
         if(this.charFrame < this.totalFrames ) this.charFrame++
         else{
             this.charFrame = 0
@@ -119,6 +122,19 @@ export class wizard extends character {
         if(this.jumping) return;
         this.vel.y = -15;
         this.jumping = true
+    }
+
+    //Handles Jumping Animations
+    jumpAnimations() {
+        if(this.jumping) return;
+        if(this.vel.y > 0) {
+            this.img.src = this.imgPath+'/Fall.png'
+            this.totalFrames = 1;
+        }
+        if(this.vel.y < 0) {
+            this.img.src = this.imgPath+'/Jump.png'
+            this.totalFrames = 1;
+        }
     }
 
     attack1(){
@@ -148,9 +164,16 @@ export class wizard extends character {
     physUpdate(){
         if(this.vel.x < .07 && this.vel.x > 0) { this.vel.x = 0}
         if(this.vel.x > -gravity.x && this.vel.x < 0) { this.vel.x = 0}
-        if(this.vel.x < 0) this.vel.x += gravity.x;
-        if (this.vel.x > 0) this.vel.x -= gravity.x
+        if(this.vel.x < 0) {
+            this.vel.x += gravity.x;
+            if (this.jumping) this.vel.x -= gravity.x/2
+        }
+        if (this.vel.x > 0) {
+            this.vel.x -= gravity.x
+            if (this.jumping) this.vel.x += gravity.x/2
+        }
         if(this.vel.x == 0) this.moving = 0
+        if(this.vel.y != 0) this.idle = false; 
         this.vel.y += gravity.y;
         this.x += this.vel.x;
         this.y += this.vel.y;
