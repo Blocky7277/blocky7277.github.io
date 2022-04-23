@@ -21,7 +21,7 @@ class character{
         this.spriteHeight = spriteHeight;
         this.jumping = true;
         this.attacking = false;
-        this.idle
+        this.idle = true;
         this.moving = 0; // 0 none, 1 right, -1 left Only counts for player movement
         this.direction = 0; // 1 right, -1 left
         this.moveinc = moveinc;
@@ -78,7 +78,7 @@ export class wizard extends character {
 
             // draw the img
             // no need for x,y since we've already translated
-            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, -this.spriteCollider.width, 0, 300, 300);
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, -this.spriteCollider.width /*Compensates for flip */, 0, 300, 300);
             
             // always clean up -- reset transformations to default
             ctx.setTransform(1,0,0,1,0,0);
