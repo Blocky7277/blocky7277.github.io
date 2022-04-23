@@ -1,5 +1,5 @@
 // Canvas Related Constants
-/** @type {HTMLCanvasElement} */
+/** @type {HTMLCanvasElement} */ 
 export const  c = myCanvas;
 export const ctx = c.getContext("2d");
 const cWidth = c.width; 
@@ -42,7 +42,8 @@ var key_codes = { // Defaults to arrow keys
     left: 37,
     right: 39,
     attack_1: 81,
-    attack_2: 87
+    attack_2: 87,
+    jump: 32 // Spacebar
 }
 
 function initialize(){
@@ -59,11 +60,9 @@ function gameUpdate() {
     //GAME UPDATE LOGIC
     gameFrame++
 
-    player.colliderUpdate()
+    player.update()
+    // player.colliderUpdate()
 
-    
-    movementHandler()
-    
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
         newkeys[i] = false
@@ -80,19 +79,21 @@ function gameDraw(){
     
 }
 
-function movementHandler() {
+export function movementAndAttackHandler() {
     if(curkeys[key_codes.right]){
         player.moveRight()
     }
     if(curkeys[key_codes.left]){
         player.moveLeft()
     }
+    if(newkeys[key_codes.jump]) { // Jump Button
+        player.jump()
+    } 
     if(newkeys[key_codes.attack_1]) { // Attack 1 Button
         player.attack1()
     }
     if(newkeys[key_codes.attack_2]) { // Attack 2 Button
         player.attack2()
-        console.log("active")
     }
 }
 
