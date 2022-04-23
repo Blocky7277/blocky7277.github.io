@@ -7,21 +7,7 @@ const cHeight = c.height;
 
 import { wizard } from "./characters.js";
 
-//Classes for the game
-export class character{
-    constructor(x, y, width, height, health, imgSrc){
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.health = health;
-        this.imgSrc = imgSrc;
-    }
-
-}
-
 // The keycode events
-
 // When the key is pressed it will stay true
 var curkeys = [];
 // Only true for one frame
@@ -32,7 +18,7 @@ var gameState = 0;
 export var gameFrame = 0;
 
 
-var player = new wizard(0, 0, 100, './sprites/wizard', 250, 250)
+var player = new wizard(0, 0, 100, './sprites/mahonohito', 250, 250)
 console.log(player)
 
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P
