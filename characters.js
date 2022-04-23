@@ -22,6 +22,7 @@ class character{
         this.jumping = true;
         this.attacking = false;
         this.moving = 0; // 0 none, 1 right, -1 left Only counts for player movement
+        this.direction = 0; // 1 right, -1 left
         this.moveinc = moveinc;
         this.vel = {
             x: 0,
@@ -31,12 +32,14 @@ class character{
     }
     moveLeft() {
         if(this.vel.x > -this.moveinc) this.vel.x -=.3;
-        this.moving = -1
+        this.moving = -1;
+        this.direction = -1;
     }
     
     moveRight() {
         if(this.vel.x < this.moveinc) this.vel.x +=.3;
-        this.moving = 1
+        this.moving = 1;
+        this.direction = 1;
     }
 }
 
@@ -55,14 +58,43 @@ export class wizard extends character {
     update(){
         this.physUpdate()
         movementAndAttackHandler()
+        if(this.vel.y > 0) {
+            this.img.src = this.imgPath+'/Fall.png'
+            this.totalFrames = 1;
+        }
+        if(this.vel.y < 0) {
+            this.img.src = this.imgPath+'/Jump.png'
+            this.totalFrames = 1;
+        }
         this.colliderUpdate()
     }
 
     draw(){
-        //Displays Hitbox
-        // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
-        // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, ImageX, ImageY, Image Width, Image Height
-        ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 300, 300);
+        if (this.direction == -1) {
+            //Collider
+            // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+            ctx.translate(this.x+this.spriteWidth,this.y);
+
+            // scaleX by -1; this "trick" flips horizontally
+            ctx.scale(-1,1);
+
+            // draw the img
+            // no need for x,y since we've already translated
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, -this.spriteCollider.width, 0, 300, 300);
+            
+            // always clean up -- reset transformations to default
+            ctx.setTransform(1,0,0,1,0,0);
+        }
+        else{
+            //Displays Hitbox
+            // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+            // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, ImageX, ImageY, Image Width, Image Height
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 300, 300);
+        }
+        if (this.moving == 0){
+            this.img.src = this.imgPath+'/Idle.png'
+            this.moving = false;
+        }
         if(gameFrame % staggerFrame != 0) return;
         if(this.charFrame < this.totalFrames ) this.charFrame++
         else{
@@ -118,7 +150,7 @@ export class wizard extends character {
         if(this.vel.x > -gravity.x && this.vel.x < 0) { this.vel.x = 0}
         if(this.vel.x < 0) this.vel.x += gravity.x;
         if (this.vel.x > 0) this.vel.x -= gravity.x
-        console.log(this.vel.x, this.vel.y)
+        if(this.vel.x == 0) this.moving = 0
         this.vel.y += gravity.y;
         this.x += this.vel.x;
         this.y += this.vel.y;

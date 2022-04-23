@@ -77,14 +77,24 @@ function gameDraw(){
     
     player.draw()
     
+    
 }
 
 export function movementAndAttackHandler() {
     if(curkeys[key_codes.right]){
         player.moveRight()
+        player.img.src = player.imgPath+'/Run.png';
+        if(newkeys[key_codes.right]){
+            player.charFrame = 0;
+            player.totalFrames = 7;}
     }
     if(curkeys[key_codes.left]){
         player.moveLeft()
+        player.img.src = player.imgPath+'/Run.png';
+        if(newkeys[key_codes.right]){
+            player.charFrame = 0;
+            player.totalFrames = 7;
+        }
     }
     if(newkeys[key_codes.jump]) { // Jump Button
         player.jump()
