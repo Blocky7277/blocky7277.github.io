@@ -32,20 +32,24 @@ var gameState = 0;
 export var gameFrame = 0;
 
 
-var player = new wizard(0, 0, 100, './sprites/wizard')
+var player = new wizard(0, 0, 100, './sprites/wizard', 250, 250)
 console.log(player)
 
-var wasdKeys = [65, 68]
-var arrowKeys = [37, 39]
+var wasdKeys = [65, 68, 79, 80] // A, D, O, P
+var arrowKeys = [37, 39, 81, 87] // Left, Right, Q, W
 
-var movement_key_codes = {
-    left: 65,
-    right: 68
+var key_codes = { // Defaults to arrow keys
+    left: 37,
+    right: 39,
+    attack_1: 81,
+    attack_2: 87
 }
 
 function initialize(){
 
-    window.addEventListener('keydown', function(e){ curkeys[e.keyCode] = true;})
+    window.addEventListener('keydown', function(e){ if(!curkeys[e.keyCode]){
+        curkeys[e.keyCode] = true; 
+        newkeys[e.keyCode] = true;}})
     window.addEventListener('keyup', function(e){ curkeys[e.keyCode] = false;})
 
     window.requestAnimationFrame(gameUpdate);
@@ -55,7 +59,15 @@ function gameUpdate() {
     //GAME UPDATE LOGIC
     gameFrame++
 
+    player.colliderUpdate()
+
+    
+    movementHandler()
+    
     //Don't modify the code below
+    for (let i = 0; i < newkeys.length; i++) {
+        newkeys[i] = false
+    }
     gameDraw();
     window.requestAnimationFrame(gameUpdate);
 }
@@ -63,15 +75,24 @@ function gameUpdate() {
 function gameDraw(){
     ctx.clearRect(0, 0, cWidth, cHeight);
     //DRAW STATEMENTS
-
+    
     player.draw()
-
+    
 }
 
 function movementHandler() {
-    if(curkeys[movement_key_codes.right]){
+    if(curkeys[key_codes.right]){
         player.moveRight()
+    }
+    if(curkeys[key_codes.left]){
         player.moveLeft()
+    }
+    if(newkeys[key_codes.attack_1]) { // Attack 1 Button
+        player.attack1()
+    }
+    if(newkeys[key_codes.attack_2]) { // Attack 2 Button
+        player.attack2()
+        console.log("active")
     }
 }
 
