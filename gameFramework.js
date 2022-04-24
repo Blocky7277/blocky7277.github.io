@@ -18,7 +18,7 @@ var gameState = 0;
 export var gameFrame = 0;
 
 
-var player = new wizard(0, 0, 100, './sprites/mahonohito', 250, 250)
+var player = new wizard(0, 0, 100, './sprites/mahonohito', 250, 250, 7, 125, 135, 25)
 console.log(player)
 
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P
