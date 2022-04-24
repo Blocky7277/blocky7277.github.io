@@ -29,6 +29,7 @@ class character{
         }
         this.inAir = false;
         this.attacking = false;
+        this.attacked = false;
         this.idle = true;
         this.direction = 1; // 1 right, -1 left
         this.moveinc = moveinc;
@@ -135,7 +136,7 @@ export class wizard extends character {
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
-            
+
             //Translates to the images position
             ctx.translate(this.x+this.spriteWidth,this.y);
             
