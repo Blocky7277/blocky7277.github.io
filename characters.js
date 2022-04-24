@@ -126,6 +126,8 @@ export class wizard extends character {
         this.jumpAnimations()
         //Check for attacks last so you can attack in mid air
         attackHandler()
+        //Checks for incoming attacks
+
     }
     
     draw(){
@@ -133,6 +135,8 @@ export class wizard extends character {
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
+            
+            //Translates to the images position
             ctx.translate(this.x+this.spriteWidth,this.y);
             
             // scaleX by -1; this "trick" flips horizontally
