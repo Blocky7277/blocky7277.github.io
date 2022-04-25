@@ -69,7 +69,7 @@ export function movementHandler() {
     if(curkeys[key_codes.right]){
         if(player.attacking && !player.jumping) return;
         player.moveRight()
-        if(player.attacking) return;
+        if(player.attacking || player.inAir) return;
         player.img.src = player.imgPath+'/Run.png';
         if(newkeys[key_codes.right]){
             player.charFrame = 0;
@@ -78,7 +78,7 @@ export function movementHandler() {
     if(curkeys[key_codes.left]){
         if(player.attacking && !player.jumping) return;
         player.moveLeft()
-        if(player.attacking) return;
+        if(player.attacking || player.inAir) return;
         player.img.src = player.imgPath+'/Run.png';
         if(newkeys[key_codes.right]){
             player.charFrame = 0;

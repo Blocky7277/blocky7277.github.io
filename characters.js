@@ -1,12 +1,12 @@
 import {attackHandler, ctx, gameFrame, movementHandler } from "./gameFramework.js";
 
-const staggerFrame = 15
+const staggerFrame = 7;
 
 const c = myCanvas;
 const cWidth = c.width; 
 const cHeight = c.height;
 const ground = cHeight;
-const gravity = {x: .17, y: 0.3};
+const gravity = {x: .23, y: 0.4};
 
 
 class character{
@@ -41,13 +41,13 @@ class character{
     }
 
     moveLeft() {
-        if(this.vel.x > -this.moveinc) this.vel.x -=.3;
+        if(this.vel.x > -this.moveinc) this.vel.x -=.4;
         this.direction = -1;
         this.idle = false;
     }
     
     moveRight() {
-        if(this.vel.x < this.moveinc) this.vel.x +=.3;
+        if(this.vel.x < this.moveinc) this.vel.x +=.4;
         this.direction = 1;
         this.idle = false;
     }
@@ -123,10 +123,10 @@ export class wizard extends character {
         this.physUpdate()
         //Grab the inputs from this frame
         movementHandler()
-        //Update the jump animations after the inputs
-        this.jumpAnimations()
         //Check for attacks last so you can attack in mid air
         attackHandler()
+        //Updates Animations
+        this.animationUpdate()
         //Checks for incoming attacks
 
     }
@@ -155,24 +155,6 @@ export class wizard extends character {
             // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, ImageX, ImageY, Image Width, Image Height
             ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 300, 300);
         }
-        
-        //Eveything below handles a majority of the animation logic
-        if (this.vel.x == 0 && !this.idle && !this.attacking){
-            this.img.src = this.imgPath+'/Idle.png'
-            this.idle = true
-        }
-        
-        //Staggers the frames so the animations don't play too fast
-        if(gameFrame % staggerFrame != 0) return;
-        //Animates next frame if there is another frame otherwise start over from first frame
-        if(this.charFrame < this.totalFrames ) this.charFrame++
-        else{
-            this.charFrame = 0
-            if(this.attacking) {
-                this.img.src = this.imgPath+'/Idle.png'
-                this.attacking = false;
-            }
-        }
     }
     
     
@@ -180,21 +162,6 @@ export class wizard extends character {
         if(this.inAir) return;
         this.vel.y = -15;
         this.inAir = true
-    }
-    
-    //Handles Jumping Animations
-    jumpAnimations() {
-        if(!this.inAir || this.attacking) return;
-        if(this.vel.y > 0) {
-            this.charFrame = 0;
-            this.img.src = this.imgPath+'/Fall.png'
-            this.totalFrames = 1;
-        }
-        if(this.vel.y < 0) {
-            this.charFrame = 0;
-            this.img.src = this.imgPath+'/Jump.png'
-            this.totalFrames = 1;
-        }
     }
     
     attack1(){
@@ -218,6 +185,42 @@ export class wizard extends character {
             y: this.y+this.spriteOffsetY,
             width: 50,
             height: 70
+        }
+    }
+    
+    animationUpdate(){
+        //Eveything below handles a majority of the animation logic
+        if (this.vel.x == 0 && !this.idle && !this.attacking && !this.attacked && !this.inAir){
+            this.img.src = this.imgPath+'/Idle.png'
+            this.idle = true
+        }
+        
+        //Staggers the frames so the animations don't play too fast
+        if(gameFrame % staggerFrame != 0) return;
+        //Animates next frame if there is another frame otherwise start over from first frame
+        if(this.charFrame < this.totalFrames ) this.charFrame++
+        else{
+            this.charFrame = 0
+            if(this.attacking) {
+                this.img.src = this.imgPath+'/Idle.png'
+                this.attacking = false;
+            }
+            if(this.attacked){
+                this.img.src = this.imgPath+'/Idle.png'
+                this.attacking = false;
+            }
+        }
+
+        if(!this.inAir || this.attacking) return;
+        if(this.vel.y > 0) {
+            this.charFrame = 0;
+            this.img.src = this.imgPath+'/Fall.png'
+            this.totalFrames = 1;
+        }
+        if(this.vel.y < 0) {
+            this.charFrame = 0;
+            this.img.src = this.imgPath+'/Jump.png'
+            this.totalFrames = 1;
         }
     }
     
