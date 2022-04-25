@@ -1,6 +1,6 @@
 import {attackHandler, ctx, gameFrame, movementHandler } from "./gameFramework.js";
 
-const staggerFrame = 7;
+const staggerFrame = 5;
 
 const c = myCanvas;
 const cWidth = c.width; 
@@ -32,6 +32,7 @@ class character{
         this.attacked = false;
         this.idle = true;
         this.direction = 1; // 1 right, -1 left
+        this.koed = false;
         this.moveinc = moveinc;
         this.vel = {
             x: 0,
@@ -121,13 +122,14 @@ export class wizard extends character {
     update(){
         //Update the physics with inputs from last frame/tick
         this.physUpdate()
+        //Checks for incoming attacks
+        
         //Grab the inputs from this frame
         movementHandler()
         //Check for attacks last so you can attack in mid air
         attackHandler()
         //Updates Animations
         this.animationUpdate()
-        //Checks for incoming attacks
 
     }
     
@@ -189,7 +191,10 @@ export class wizard extends character {
     }
     
     animationUpdate(){
+        console.log(this.charFrame)
         //Eveything below handles a majority of the animation logic
+
+        //Stops the movement animation the moment the character stops moving
         if (this.vel.x == 0 && !this.idle && !this.attacking && !this.attacked && !this.inAir){
             this.img.src = this.imgPath+'/Idle.png'
             this.idle = true
@@ -198,29 +203,41 @@ export class wizard extends character {
         //Staggers the frames so the animations don't play too fast
         if(gameFrame % staggerFrame != 0) return;
         //Animates next frame if there is another frame otherwise start over from first frame
-        if(this.charFrame < this.totalFrames ) this.charFrame++
+        if(this.charFrame < this.totalFrames) this.charFrame++
         else{
+            if(this.koed) return;
             this.charFrame = 0
             if(this.attacking) {
                 this.img.src = this.imgPath+'/Idle.png'
                 this.attacking = false;
             }
             if(this.attacked){
-                this.img.src = this.imgPath+'/Idle.png'
-                this.attacking = false;
+                this.img.src = this.imgPath+'/Hit.png'
+                this.attacked = false;
             }
         }
-
-        if(!this.inAir || this.attacking) return;
-        if(this.vel.y > 0) {
+        
+        //Checks if the character lost and plays the coresponding animation
+        if(this.health <= 0 && !this.koed){
             this.charFrame = 0;
-            this.img.src = this.imgPath+'/Fall.png'
-            this.totalFrames = 1;
+            this.img.src = this.imgPath+'/Death.png'
+            this.totalFrames = 6;
+            this.koed = true;
+            return
         }
-        if(this.vel.y < 0) {
-            this.charFrame = 0;
-            this.img.src = this.imgPath+'/Jump.png'
-            this.totalFrames = 1;
+        
+        //Makes sure character not attacking and is in the air then plays corresponding animation 
+        if(this.inAir && !this.attacking){
+            if(this.vel.y > 0) {
+                this.charFrame = 0;
+                this.img.src = this.imgPath+'/Fall.png'
+                this.totalFrames = 1;
+            }
+            if(this.vel.y < 0) {
+                this.charFrame = 0;
+                this.img.src = this.imgPath+'/Jump.png'
+                this.totalFrames = 1;
+            }
         }
     }
     
