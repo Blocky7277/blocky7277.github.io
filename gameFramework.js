@@ -4,6 +4,7 @@ export const  c = myCanvas;
 export const ctx = c.getContext("2d");
 const cWidth = c.width; 
 const cHeight = c.height;
+const fps = 60;
 
 import { wizard } from "./characters.js";
 
@@ -53,7 +54,11 @@ function gameUpdate() {
         newkeys[i] = false
     }
     gameDraw();
-    window.requestAnimationFrame(gameUpdate);
+
+    //FPS throttling for consistant gameplay across devices
+    setTimeout(() => {
+        requestAnimationFrame(gameUpdate);
+      }, 1000 / fps);
 }
 
 function gameDraw(){
