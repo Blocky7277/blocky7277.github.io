@@ -1,12 +1,12 @@
 import {attackHandler, ctx, gameFrame, movementHandler } from "./gameFramework.js";
 
-const staggerFrame = 5;
+const staggerFrame = 4;
 
 const c = myCanvas;
 const cWidth = c.width; 
 const cHeight = c.height;
 const ground = cHeight;
-const gravity = {x: .23, y: 0.4};
+const gravity = {x: .27, y: 0.42};
 
 
 class character{
@@ -29,7 +29,7 @@ class character{
         }
         this.inAir = false;
         this.attacking = false;
-        this.attacked = false;
+        this.attacked = true;
         this.idle = true;
         this.direction = 1; // 1 right, -1 left
         this.koed = false;
@@ -42,13 +42,13 @@ class character{
     }
 
     moveLeft() {
-        if(this.vel.x > -this.moveinc) this.vel.x -=.4;
+        if(this.vel.x > -this.moveinc) this.vel.x -=.6;
         this.direction = -1;
         this.idle = false;
     }
     
     moveRight() {
-        if(this.vel.x < this.moveinc) this.vel.x +=.4;
+        if(this.vel.x < this.moveinc) this.vel.x +=.6;
         this.direction = 1;
         this.idle = false;
     }
@@ -123,13 +123,15 @@ export class wizard extends character {
         //Update the physics with inputs from last frame/tick
         this.physUpdate()
         //Checks for incoming attacks
-        
+
         //Grab the inputs from this frame
         movementHandler()
         //Check for attacks last so you can attack in mid air
         attackHandler()
         //Updates Animations
         this.animationUpdate()
+
+        console.log(this.attacked)
 
     }
     
@@ -191,29 +193,37 @@ export class wizard extends character {
     }
     
     animationUpdate(){
-        console.log(this.charFrame)
         //Eveything below handles a majority of the animation logic
 
         //Stops the movement animation the moment the character stops moving
         if (this.vel.x == 0 && !this.idle && !this.attacking && !this.attacked && !this.inAir){
             this.img.src = this.imgPath+'/Idle.png'
             this.idle = true
+            this.totalFrames = 7;
+        }
+
+        else if(!this.attacking && !this.inAir && this.vel.x != 0){
+            this.img.src = this.imgPath+'/Run.png';
+            this.totalFrames = 7;
         }
         
         //Staggers the frames so the animations don't play too fast
         if(gameFrame % staggerFrame != 0) return;
         //Animates next frame if there is another frame otherwise start over from first frame
-        if(this.charFrame < this.totalFrames) this.charFrame++
+        if(this.charFrame < this.totalFrames) this.charFrame++;
         else{
+            //Checks if the character lost because then there is no need to update animations
             if(this.koed) return;
             this.charFrame = 0
             if(this.attacking) {
                 this.img.src = this.imgPath+'/Idle.png'
                 this.attacking = false;
+                this.totalFrames = 7;
             }
             if(this.attacked){
-                this.img.src = this.imgPath+'/Hit.png'
                 this.attacked = false;
+                this.img.src = this.imgPath+'/Idle.png'
+                this.totalFrames = 7;
             }
         }
         
@@ -225,9 +235,15 @@ export class wizard extends character {
             this.koed = true;
             return
         }
-        
-        //Makes sure character not attacking and is in the air then plays corresponding animation 
-        if(this.inAir && !this.attacking){
+
+        //Attacked Animations
+        if(this.attacked){
+            this.img.src = this.imgPath+'/Hit.png'
+            this.totalFrames = 2;
+        }
+
+        //Makes sure character not attacking or hasn't been attacked and is in the air then plays corresponding animation 
+        if(this.inAir && !this.attacking && !this.attacked){
             if(this.vel.y > 0) {
                 this.charFrame = 0;
                 this.img.src = this.imgPath+'/Fall.png'

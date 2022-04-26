@@ -7,6 +7,7 @@ const cHeight = c.height;
 const fps = 60;
 
 import { wizard } from "./characters.js";
+import * as utilityJs from "./utilityClassesAndFunctions.js"
 
 // The keycode events
 // When the key is pressed it will stay true
@@ -17,6 +18,7 @@ var newkeys = [];
 //Game States 0: title screen, 1: settings, 2: instructions, 3: playing -1: lose, 3: win, .5: pause,
 var gameState = 0;
 export var gameFrame = 0;
+var testTimer = new utilityJs.Timer(5000);
 
 
 var player = new wizard(0, 0, 100, './sprites/mahonohito', 250, 250, 10, 125, 135, 25)
@@ -49,6 +51,8 @@ function gameUpdate() {
 
     player.update()
 
+    if(testTimer.isReady()) player.attacked = true;
+
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
         newkeys[i] = false
@@ -71,23 +75,18 @@ function gameDraw(){
 }
 
 export function movementHandler() {
+    if(player.attacking && !player.jumping) return;
+    else if(player.koed || player.attacked) return;
     if(curkeys[key_codes.right]){
-        if(player.attacking && !player.jumping) return;
         player.moveRight()
-        if(player.attacking || player.inAir) return;
-        player.img.src = player.imgPath+'/Run.png';
         if(newkeys[key_codes.right]){
             player.charFrame = 0;
-            player.totalFrames = 7;}
+        }
     }
     if(curkeys[key_codes.left]){
-        if(player.attacking && !player.jumping) return;
         player.moveLeft()
-        if(player.attacking || player.inAir) return;
-        player.img.src = player.imgPath+'/Run.png';
         if(newkeys[key_codes.right]){
             player.charFrame = 0;
-            player.totalFrames = 7;
         }
     }
     if(newkeys[key_codes.jump]) { // Jump Button
