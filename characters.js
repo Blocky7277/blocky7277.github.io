@@ -10,7 +10,7 @@ const gravity = {x: .27, y: 0.5};
 
 
 class character{
-    constructor(x, y, health, imgSrc, spriteWidth = 250, spriteHeight = 250, moveinc = 7, spriteOffsetX, spriteOffsetY, drawOffsetX = 0, drawOffsetY = 0, spriteColliderWidth, spriteColliderHeight){
+    constructor(x, y, health, imgSrc, spriteWidth = 250, spriteHeight = 250, moveinc = 7, spriteOffsetX, spriteOffsetY, drawOffsetX = 0, drawOffsetY = 0,){
         this.x = x;
         this.y = y;
         this.health = health;
@@ -107,6 +107,12 @@ class character{
             height: this.spriteColliderHeight,
         }
     }
+
+    jump(){
+        if(this.inAir) return;
+        this.vel.y = -15;
+        this.inAir = true
+    }
     
     intersects(obj){
         if (this.spriteCollider.x < obj.spriteCollider.x + obj.spriteCollider.width && this.spriteCollider.x + this.spriteCollider.width > obj.x && this.y < obj.y + obj.height && this.y + this.height > obj.y) {
@@ -119,8 +125,8 @@ class character{
 }
 
 export class wizard extends character {
-    constructor(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY,  drawOffsetX, drawOffsetY, spriteColliderWidth, spriteColliderHeight){
-        super(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY, drawOffsetX, drawOffsetY, spriteColliderWidth, spriteColliderHeight);
+    constructor(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY,  drawOffsetX, drawOffsetY,){
+        super(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY, drawOffsetX, drawOffsetY,);
         this.spriteCollider = {
             x: 0, 
             y: 0,
@@ -128,6 +134,8 @@ export class wizard extends character {
             height: 0,
         }
         this.totalFrames = 7
+        this.spriteColliderWidth = 30;
+        this.spriteColliderHeight = 50;
     }
     
     update(){
@@ -171,11 +179,6 @@ export class wizard extends character {
     }
     
     
-    jump(){
-        if(this.inAir) return;
-        this.vel.y = -15;
-        this.inAir = true
-    }
     
     attack1(){
         if(this.attacking) return;
@@ -252,5 +255,43 @@ export class wizard extends character {
         }
 
         
+    }
+}
+
+export class windElemental extends character{
+    constructor(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY,  drawOffsetX, drawOffsetY, spriteColliderWidth, spriteColliderHeight){
+        super(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY, drawOffsetX, drawOffsetY, spriteColliderWidth, spriteColliderHeight);
+        this.spriteCollider = {
+            x: 0, 
+            y: 0,
+            width: 0,
+            height: 0,
+        }
+        this.totalFrames = 7
+    }
+    draw(){
+        //Collider
+        // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+        if (this.direction == -1) {
+            //This all essentially flips the image
+
+            //Translates to the images position
+            ctx.translate(this.x+this.spriteCollider.width*23/4,this.y);
+            
+            // scaleX by -1; this "trick" flips horizontally
+            ctx.scale(-1,1);
+            
+            // draw the img
+            // no need for x,y since we've already translated
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, -this.spriteCollider.width /*Compensates for flip */, 0, 200, 200);
+            
+            // always clean up -- reset transformations to default
+            ctx.setTransform(1,0,0,1,0,0);
+        }
+        
+        else{
+            // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, positionOnScreenX, positionOnScreenY, widthOnScreen, heightOnScreen
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 200, 200);
+        }
     }
 }
