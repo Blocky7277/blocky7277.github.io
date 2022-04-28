@@ -187,8 +187,8 @@ export class wizard extends character {
         this.spriteCollider = {
             x: this.x+this.spriteOffsetX, 
             y: this.y+this.spriteOffsetY,
-            width: 30,
-            height: 50
+            width: this.spriteColliderWidth,
+            height: this.spriteColliderHeight,
         }
     }
     
