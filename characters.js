@@ -6,7 +6,7 @@ const c = myCanvas;
 const cWidth = c.width; 
 const cHeight = c.height;
 const ground = cHeight;
-const gravity = {x: .27, y: 0.42};
+const gravity = {x: .27, y: 0.5};
 
 
 class character{
@@ -29,7 +29,7 @@ class character{
         }
         this.inAir = false;
         this.attacking = false;
-        this.attacked = true;
+        this.attacked = false;
         this.idle = true;
         this.direction = 1; // 1 right, -1 left
         this.koed = false;
@@ -131,33 +131,31 @@ export class wizard extends character {
         //Updates Animations
         this.animationUpdate()
 
-        console.log(this.attacked)
-
     }
     
     draw(){
         //Collider
-        // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+        ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
 
             //Translates to the images position
-            ctx.translate(this.x+this.spriteWidth,this.y);
+            ctx.translate(this.x+this.spriteCollider.width*6-this.spriteCollider.width/4,this.y);
             
             // scaleX by -1; this "trick" flips horizontally
             ctx.scale(-1,1);
             
             // draw the img
             // no need for x,y since we've already translated
-            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, -this.spriteCollider.width /*Compensates for flip */, 0, 300, 300);
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, -this.spriteCollider.width /*Compensates for flip */, 0, 200, 200);
             
             // always clean up -- reset transformations to default
             ctx.setTransform(1,0,0,1,0,0);
         }
         
         else{
-            // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, ImageX, ImageY, Image Width, Image Height
-            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 300, 300);
+            // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, positionOnScreenX, positionOnScreenY, widthOnScreen, heightOnScreen
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 200, 200);
         }
     }
     
@@ -187,26 +185,12 @@ export class wizard extends character {
         this.spriteCollider = {
             x: this.x+this.spriteOffsetX, 
             y: this.y+this.spriteOffsetY,
-            width: 50,
-            height: 70
+            width: 30,
+            height: 50
         }
     }
     
     animationUpdate(){
-        //Eveything below handles a majority of the animation logic
-
-        //Stops the movement animation the moment the character stops moving
-        if (this.vel.x == 0 && !this.idle && !this.attacking && !this.attacked && !this.inAir){
-            this.img.src = this.imgPath+'/Idle.png'
-            this.idle = true
-            this.totalFrames = 7;
-        }
-
-        else if(!this.attacking && !this.inAir && this.vel.x != 0){
-            this.img.src = this.imgPath+'/Run.png';
-            this.totalFrames = 7;
-        }
-        
         //Staggers the frames so the animations don't play too fast
         if(gameFrame % staggerFrame != 0) return;
         //Animates next frame if there is another frame otherwise start over from first frame
@@ -215,46 +199,55 @@ export class wizard extends character {
             //Checks if the character lost because then there is no need to update animations
             if(this.koed) return;
             this.charFrame = 0
-            if(this.attacking) {
-                this.img.src = this.imgPath+'/Idle.png'
-                this.attacking = false;
-                this.totalFrames = 7;
-            }
-            if(this.attacked){
-                this.attacked = false;
-                this.img.src = this.imgPath+'/Idle.png'
-                this.totalFrames = 7;
-            }
         }
-        
-        //Checks if the character lost and plays the coresponding animation
+        //Eveything below handles a majority of the animation logic
+
+        //Checks if the conditions are met runs the animation then returns otherwise 
         if(this.health <= 0 && !this.koed){
-            this.charFrame = 0;
+            if(!this.koed) this.charFrame = 0;
             this.img.src = this.imgPath+'/Death.png'
             this.totalFrames = 6;
             this.koed = true;
             return
         }
-
         //Attacked Animations
-        if(this.attacked){
-            this.img.src = this.imgPath+'/Hit.png'
+        else if(this.attacked){
             this.totalFrames = 2;
+            this.img.src = this.imgPath+'/Hit.png'
+            if(this.charFrame == this.totalFrames) this.attacked = false;
+            return
+        }
+        
+        if(this.attacking) {
+            if(this.charFrame == this.totalFrames) this.attacking = false;
+            return;
+        }
+        
+        else if(this.inAir){
+            this.totalFrames = 1;
+            if(this.charFrame >= this.totalFrames) this.charFrame = 0;
+            if(this.vel.y > 0) {
+                this.img.src = this.imgPath+'/Fall.png'
+            }
+            else if(this.vel.y < 0) {
+                this.img.src = this.imgPath+'/Jump.png'
+            }
+            return;
+        }
+        
+        else if(this.vel.x != 0){
+            this.img.src = this.imgPath+'/Run.png';
+            this.totalFrames = 7;
+            return
         }
 
-        //Makes sure character not attacking or hasn't been attacked and is in the air then plays corresponding animation 
-        if(this.inAir && !this.attacking && !this.attacked){
-            if(this.vel.y > 0) {
-                this.charFrame = 0;
-                this.img.src = this.imgPath+'/Fall.png'
-                this.totalFrames = 1;
-            }
-            if(this.vel.y < 0) {
-                this.charFrame = 0;
-                this.img.src = this.imgPath+'/Jump.png'
-                this.totalFrames = 1;
-            }
+        else{
+            this.img.src = this.imgPath+'/Idle.png'
+            this.idle = true
+            this.totalFrames = 7;
+            return;
         }
+
+        
     }
-    
 }

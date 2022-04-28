@@ -21,7 +21,7 @@ export var gameFrame = 0;
 var testTimer = new utilityJs.Timer(5000);
 
 
-var player = new wizard(0, 0, 100, './sprites/mahonohito', 250, 250, 10, 125, 135, 25)
+var player = new wizard(0, 0, 100, './sprites/mahonohito', 250, 250, 10, 86, 85, 25)
 console.log(player)
 
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P
@@ -50,9 +50,7 @@ function gameUpdate() {
     gameFrame++
 
     player.update()
-
-    if(testTimer.isReady()) player.attacked = true;
-
+        
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
         newkeys[i] = false

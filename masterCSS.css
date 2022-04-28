@@ -23,4 +23,5 @@ canvas{
     background: whitesmoke;
     border-radius: 10px;
     border: .25em solid #8b8b8b;
+    scale: 1.5;
 }
