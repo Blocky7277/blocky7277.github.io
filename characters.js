@@ -98,7 +98,16 @@ class character{
             this.inAir = false;
         }
     }
-
+    
+    colliderUpdate(){
+        this.spriteCollider = {
+            x: this.x+this.spriteOffsetX, 
+            y: this.y+this.spriteOffsetY,
+            width: this.spriteColliderWidth,
+            height: this.spriteColliderHeight,
+        }
+    }
+    
     intersects(obj){
         if (this.spriteCollider.x < obj.spriteCollider.x + obj.spriteCollider.width && this.spriteCollider.x + this.spriteCollider.width > obj.x && this.y < obj.y + obj.height && this.y + this.height > obj.y) {
             return true;
@@ -183,14 +192,6 @@ export class wizard extends character {
         this.attacking = true;
     }
     
-    colliderUpdate(){
-        this.spriteCollider = {
-            x: this.x+this.spriteOffsetX, 
-            y: this.y+this.spriteOffsetY,
-            width: this.spriteColliderWidth,
-            height: this.spriteColliderHeight,
-        }
-    }
     
     animationUpdate(){
         //Staggers the frames so the animations don't play too fast
