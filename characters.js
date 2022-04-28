@@ -10,7 +10,7 @@ const gravity = {x: .27, y: 0.5};
 
 
 class character{
-    constructor(x, y, health, imgSrc, spriteWidth = 250, spriteHeight = 250, moveinc = 7, spriteOffsetX, spriteOffsetY, drawOffsetX = 0, drawOffsetY = 0){
+    constructor(x, y, health, imgSrc, spriteWidth = 250, spriteHeight = 250, moveinc = 7, spriteOffsetX, spriteOffsetY, drawOffsetX = 0, drawOffsetY = 0, spriteColliderWidth, spriteColliderHeight){
         this.x = x;
         this.y = y;
         this.health = health;
@@ -19,6 +19,8 @@ class character{
         this.img.src = this.imgPath+'/Idle.png';
         this.spriteWidth = spriteWidth;
         this.spriteHeight = spriteHeight;
+        this.spriteColliderWidth = spriteColliderWidth;
+        this.spriteColliderHeight = spriteColliderHeight;
         this.spriteOffsetX = spriteOffsetX;
         this.spriteOffsetY = spriteOffsetY;
         this.drawOffsetX = drawOffsetX;
@@ -108,8 +110,8 @@ class character{
 }
 
 export class wizard extends character {
-    constructor(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY,  drawOffsetX, drawOffsetY){
-        super(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY, drawOffsetX, drawOffsetY);
+    constructor(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY,  drawOffsetX, drawOffsetY, spriteColliderWidth, spriteColliderHeight){
+        super(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY, drawOffsetX, drawOffsetY, spriteColliderWidth, spriteColliderHeight);
         this.spriteCollider = {
             x: 0, 
             y: 0,
@@ -135,12 +137,12 @@ export class wizard extends character {
     
     draw(){
         //Collider
-        ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+        // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
 
             //Translates to the images position
-            ctx.translate(this.x+this.spriteCollider.width*6-this.spriteCollider.width/4,this.y);
+            ctx.translate(this.x+this.spriteCollider.width*23/4,this.y);
             
             // scaleX by -1; this "trick" flips horizontally
             ctx.scale(-1,1);
