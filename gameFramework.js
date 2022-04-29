@@ -21,12 +21,12 @@ export var gameFrame = 0;
 var testTimer = new utilityJs.Timer(5000);
 const SPRITE_PATH_ARRAY = [
     './sprites/mahonohito', // Wizard
-    './sprites/kazeyoke/wind_SpriteSheet_288x128.png',
+    './sprites/kazeyoke/wind_SpriteSheet_288x128.png', // Wind Breaker
     './sprites/tetsuryu/metal_bladekeeper_FREE_v1.1_SpriteSheet_288x128.png'
 ]
 
 
-var player = new characters.windElemental(0, 0, SPRITE_PATH_ARRAY[1],)
+var player = new characters.windElemental(0, 0,)
 console.log(player)
 
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P

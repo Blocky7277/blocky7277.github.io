@@ -10,11 +10,10 @@ const gravity = {x: .27, y: 0.5};
 
 
 class character{
-    constructor(x, y, imgSrc, moveinc = 5,){
+    constructor(x, y, moveinc = 5,){
         this.x = x;
         this.y = y;
         this.img = new Image();
-        this.img.src = imgSrc;
         this.spriteCollider = {
             x: 0,
             y: 0,
@@ -132,7 +131,7 @@ class character{
 }
 
 export class wizard extends character {
-    constructor(x, y, imgSrc, moveinc,){
+    constructor(x, y, moveinc,){
         super(x, y, moveinc,);
         this.spriteCollider = {
             x: 0, 
@@ -140,8 +139,8 @@ export class wizard extends character {
             width: 0,
             height: 0,
         }
-        this.imgPath = imgSrc;
-        this.img = new Image();
+        this.health = 50;
+        this.imgPath = './sprites/mahonohito';
         this.img.src = this.imgPath+'/Idle.png';
         this.totalFrames = 7;
         this.spriteWidth = 250;
@@ -260,14 +259,15 @@ export class wizard extends character {
 }
 
 export class windElemental extends character{
-    constructor(x, y, imgSrc, moveinc,){
-        super(x, y, imgSrc, moveinc,);
+    constructor(x, y, moveinc,){
+        super(x, y, moveinc,);
         this.spriteCollider = {
             x: 0, 
             y: 0,
             width: 0,
             height: 0,
         }
+        this.health = 75
         this.animationcolumn = 0;
         this.totalFrames = 7;
         this.spriteWidth = 288;
@@ -278,13 +278,20 @@ export class windElemental extends character{
         this.drawOffsetY = 0;
         this.spriteColliderWidth = 30;
         this.spriteColliderHeight = 40;
+        this.img.src = './sprites/kazeyoke/wind_SpriteSheet_288x128.png'
     }
 
     attack1(){
         if(this.attacking) return;
-        this.animationcolumn = 8
+        if(this.inAir) {
+            this.animationcolumn = 5
+            this.totalFrames = 6;
+        }
+        else {
+            this.animationcolumn = 8
+            this.totalFrames = 15;
+        }
         this.charFrame = 0;
-        this.totalFrames = 7;
         this.attacking = true;
     }
     attack2(){
