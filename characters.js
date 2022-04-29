@@ -175,6 +175,7 @@ export class wizard extends character {
     }
 
     attack1(){
+        // Damage of 10
         if(this.attacking) return;
         this.img.src = this.imgPath+'/Attack1.png';
         this.charFrame = 0;
@@ -182,6 +183,7 @@ export class wizard extends character {
         this.attacking = true;
     }
     attack2(){
+        // Damage of 20
         if(this.attacking) return;
         this.img.src = this.imgPath+'/Attack2.png';
         this.charFrame = 0;
@@ -276,6 +278,7 @@ export class windElemental extends character{
     }
 
     attack1(){
+        // Damage of 7
         if(this.attacking) return;
         if(this.inAir) {
             this.animationcolumn = 5
@@ -289,6 +292,7 @@ export class windElemental extends character{
         this.attacking = true;
     }
     attack2(){
+        // Damage of 15
         if(this.attacking) return;
         this.animationcolumn = 10;
         this.charFrame = 0;
