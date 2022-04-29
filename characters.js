@@ -1,6 +1,6 @@
 import {attackHandler, ctx, gameFrame, movementHandler } from "./gameFramework.js";
 
-const staggerFrame = 4;
+const staggerFrame = 5;
 
 const c = myCanvas;
 const cWidth = c.width; 
@@ -10,24 +10,16 @@ const gravity = {x: .27, y: 0.5};
 
 
 class character{
-    constructor(x, y, health, imgSrc, spriteWidth = 250, spriteHeight = 250, moveinc = 7, spriteOffsetX, spriteOffsetY, drawOffsetX = 0, drawOffsetY = 0,){
+    constructor(x, y, imgSrc, moveinc = 5,){
         this.x = x;
         this.y = y;
-        this.health = health;
-        this.imgPath = imgSrc;
         this.img = new Image();
-        this.img.src = this.imgPath+'/Idle.png';
-        this.spriteWidth = spriteWidth;
-        this.spriteHeight = spriteHeight;
-        this.spriteColliderWidth = spriteColliderWidth;
-        this.spriteColliderHeight = spriteColliderHeight;
-        this.spriteOffsetX = spriteOffsetX;
-        this.spriteOffsetY = spriteOffsetY;
-        this.drawOffsetX = drawOffsetX;
-        this.drawOffsetY = drawOffsetY;
+        this.img.src = imgSrc;
         this.spriteCollider = {
             x: 0,
             y: 0,
+            width: 0,
+            height: 0,
         }
         this.inAir = false;
         this.attacking = false;
@@ -42,7 +34,7 @@ class character{
         }
         this.charFrame = 0
     }
-
+    
     moveLeft() {
         if(this.vel.x > -this.moveinc) this.vel.x -=.6;
         this.direction = -1;
@@ -54,7 +46,8 @@ class character{
         this.direction = 1;
         this.idle = false;
     }
-
+    
+    
     //Update Physics
     physUpdate(){
         if(this.vel.x < .07 && this.vel.x > 0) { this.vel.x = 0}
@@ -81,7 +74,7 @@ class character{
             this.vel.x = 0
             this.x = cWidth-(this.spriteOffsetX+this.spriteCollider.width+this.drawOffsetX)
         }
-
+        
         //Apply the calculated forces
         this.vel.y += gravity.y;
         this.x += this.vel.x;
@@ -99,6 +92,20 @@ class character{
         }
     }
     
+    update(){
+        //Update the physics with inputs from last frame/tick
+        this.physUpdate()
+        //Checks for incoming attacks
+        
+        //Grab the inputs from this frame
+        movementHandler()
+        //Check for attacks last so you can attack in mid air
+        attackHandler()
+        //Updates Animations
+        this.animationUpdate()
+        
+    }
+    
     colliderUpdate(){
         this.spriteCollider = {
             x: this.x+this.spriteOffsetX, 
@@ -107,7 +114,7 @@ class character{
             height: this.spriteColliderHeight,
         }
     }
-
+    
     jump(){
         if(this.inAir) return;
         this.vel.y = -15;
@@ -125,39 +132,35 @@ class character{
 }
 
 export class wizard extends character {
-    constructor(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY,  drawOffsetX, drawOffsetY,){
-        super(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY, drawOffsetX, drawOffsetY,);
+    constructor(x, y, imgSrc, moveinc,){
+        super(x, y, moveinc,);
         this.spriteCollider = {
             x: 0, 
             y: 0,
             width: 0,
             height: 0,
         }
-        this.totalFrames = 7
+        this.imgPath = imgSrc;
+        this.img = new Image();
+        this.img.src = this.imgPath+'/Idle.png';
+        this.totalFrames = 7;
+        this.spriteWidth = 250;
+        this.spriteHeight = 250;
+        this.spriteOffsetX = 86;
+        this.spriteOffsetY = 85;
+        this.drawOffsetX = 20;
+        this.drawOffsetY = 50;
         this.spriteColliderWidth = 30;
         this.spriteColliderHeight = 50;
     }
     
-    update(){
-        //Update the physics with inputs from last frame/tick
-        this.physUpdate()
-        //Checks for incoming attacks
-
-        //Grab the inputs from this frame
-        movementHandler()
-        //Check for attacks last so you can attack in mid air
-        attackHandler()
-        //Updates Animations
-        this.animationUpdate()
-
-    }
-    
+    //Draw Sprite
     draw(){
         //Collider
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
-
+    
             //Translates to the images position
             ctx.translate(this.x+this.spriteCollider.width*23/4,this.y);
             
@@ -177,9 +180,7 @@ export class wizard extends character {
             ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 200, 200);
         }
     }
-    
-    
-    
+
     attack1(){
         if(this.attacking) return;
         this.img.src = this.imgPath+'/Attack1.png';
@@ -259,31 +260,117 @@ export class wizard extends character {
 }
 
 export class windElemental extends character{
-    constructor(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY,  drawOffsetX, drawOffsetY, spriteColliderWidth, spriteColliderHeight){
-        super(x, y, health, imgSrc, spriteWidth, spriteHeight, moveinc, spriteOffsetX, spriteOffsetY, drawOffsetX, drawOffsetY, spriteColliderWidth, spriteColliderHeight);
+    constructor(x, y, imgSrc, moveinc,){
+        super(x, y, imgSrc, moveinc,);
         this.spriteCollider = {
             x: 0, 
             y: 0,
             width: 0,
             height: 0,
         }
-        this.totalFrames = 7
+        this.animationcolumn = 0;
+        this.totalFrames = 7;
+        this.spriteWidth = 288;
+        this.spriteHeight = 128;
+        this.spriteOffsetX = 128;
+        this.spriteOffsetY = 90;
+        this.drawOffsetX = 0;
+        this.drawOffsetY = 0;
+        this.spriteColliderWidth = 30;
+        this.spriteColliderHeight = 40;
     }
+
+    attack1(){
+        if(this.attacking) return;
+        this.animationcolumn = 8
+        this.charFrame = 0;
+        this.totalFrames = 7;
+        this.attacking = true;
+    }
+    attack2(){
+        if(this.attacking) return;
+        this.animationcolumn = 10;
+        this.charFrame = 0;
+        this.totalFrames = 13;
+        this.attacking = true;
+    }
+
+    animationUpdate(){
+        //Staggers the frames so the animations don't play too fast
+        if(gameFrame % staggerFrame != 0) return;
+        //Animates next frame if there is another frame otherwise start over from first frame
+        if(this.charFrame < this.totalFrames) this.charFrame++;
+        else{
+            //Checks if the character lost because then there is no need to update animations
+            if(this.koed) return;
+            this.charFrame = 0
+        }
+        //Eveything below handles a majority of the animation logic
+
+        //Checks if the conditions are met runs the animation then returns otherwise 
+        if(this.health <= 0 && !this.koed){
+            if(!this.koed) this.charFrame = 0;
+            this.animationcolumn = 13;
+            this.totalFrames = 13;
+            this.koed = true;
+            return
+        }
+        //Attacked Animations
+        else if(this.attacked){
+            this.totalFrames = 5;
+            this.animationcolumn = 12
+            if(this.charFrame == this.totalFrames) this.attacked = false;
+            return
+        }
+        
+        if(this.attacking) {
+            if(this.charFrame == this.totalFrames) this.attacking = false;
+            return;
+        }
+        
+        else if(this.inAir){
+            this.totalFrames = 2;
+            if(this.charFrame >= this.totalFrames) this.charFrame = 0;
+            if(this.vel.y > 0) {
+                this.animationcolumn = 3;
+            }
+            else if(this.vel.y < 0) {
+                this.animationcolumn = 4;
+            }
+            return;
+        }
+        
+        else if(this.vel.x != 0){
+            this.animationcolumn = 2;
+            this.totalFrames = 7;
+            return
+        }
+
+        else{
+            this.animationcolumn = 1
+            this.idle = true
+            this.totalFrames = 7;
+            return;
+        }
+
+    }
+
+    //Draw Sprite
     draw(){
         //Collider
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
-
+    
             //Translates to the images position
-            ctx.translate(this.x+this.spriteCollider.width*23/4,this.y);
+            ctx.translate(this.x,this.y);
             
             // scaleX by -1; this "trick" flips horizontally
             ctx.scale(-1,1);
             
             // draw the img
             // no need for x,y since we've already translated
-            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, -this.spriteCollider.width /*Compensates for flip */, 0, 200, 200);
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, -this.spriteWidth /*Compensates for flip */, 0, this.spriteWidth, this.spriteHeight);
             
             // always clean up -- reset transformations to default
             ctx.setTransform(1,0,0,1,0,0);
@@ -291,7 +378,7 @@ export class windElemental extends character{
         
         else{
             // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, positionOnScreenX, positionOnScreenY, widthOnScreen, heightOnScreen
-            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, 200, 200);
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, this.x, this.y, this.spriteWidth, this.spriteHeight);
         }
     }
 }
