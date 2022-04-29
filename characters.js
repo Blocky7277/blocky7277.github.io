@@ -15,7 +15,7 @@ class character{
         this.y = y;
         this.img = new Image();
         this.spriteCollider = {
-            x: 0,
+            x: 0, 
             y: 0,
             width: 0,
             height: 0,
@@ -133,12 +133,6 @@ class character{
 export class wizard extends character {
     constructor(x, y, moveinc,){
         super(x, y, moveinc,);
-        this.spriteCollider = {
-            x: 0, 
-            y: 0,
-            width: 0,
-            height: 0,
-        }
         this.health = 50;
         this.imgPath = './sprites/mahonohito';
         this.img.src = this.imgPath+'/Idle.png';
