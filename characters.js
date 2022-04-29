@@ -268,12 +268,12 @@ export class windElemental extends character{
         this.totalFrames = 7;
         this.spriteWidth = 288;
         this.spriteHeight = 128;
-        this.spriteOffsetX = 128;
-        this.spriteOffsetY = 90;
+        this.spriteOffsetX = 160;
+        this.spriteOffsetY = 113;
         this.drawOffsetX = 0;
         this.drawOffsetY = 0;
-        this.spriteColliderWidth = 30;
-        this.spriteColliderHeight = 40;
+        this.spriteColliderWidth = 35;
+        this.spriteColliderHeight = 46;
         this.img.src = './sprites/kazeyoke/wind_SpriteSheet_288x128.png'
     }
 
@@ -363,7 +363,7 @@ export class windElemental extends character{
     //Draw Sprite
     draw(){
         //Collider
-        // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+        ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
     
@@ -375,7 +375,7 @@ export class windElemental extends character{
             
             // draw the img
             // no need for x,y since we've already translated
-            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, -this.spriteWidth /*Compensates for flip */, 0, this.spriteWidth, this.spriteHeight);
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, -this.spriteWidth*1.25 /*Compensates for flip */, 0, this.spriteWidth*1.25, this.spriteHeight*1.25);
             
             // always clean up -- reset transformations to default
             ctx.setTransform(1,0,0,1,0,0);
@@ -383,7 +383,7 @@ export class windElemental extends character{
         
         else{
             // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, positionOnScreenX, positionOnScreenY, widthOnScreen, heightOnScreen
-            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, this.x, this.y, this.spriteWidth, this.spriteHeight);
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, this.x, this.y, this.spriteWidth*1.25, this.spriteHeight*1.25);
         }
     }
 }
