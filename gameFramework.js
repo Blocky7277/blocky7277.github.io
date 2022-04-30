@@ -5,6 +5,9 @@ export const ctx = c.getContext("2d");
 const cWidth = c.width; 
 const cHeight = c.height;
 const fps = 60;
+const background = new Image();
+background.src = './backgrounds/cyberpunk-street.png'
+
 
 import * as characters from "./characters.js";
 import * as utilityJs from "./utilityClassesAndFunctions.js"
@@ -71,7 +74,7 @@ function gameUpdate() {
 function gameDraw(){
     ctx.clearRect(0, 0, cWidth, cHeight);
     //DRAW STATEMENTS
-    
+    ctx.drawImage(background, 0, 0, cWidth, cHeight);
     player.draw()
     
     
