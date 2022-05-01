@@ -1,16 +1,16 @@
-import {attackHandler, ctx, gameFrame, movementHandler } from "./gameFramework.js";
+import {attackHandler, ctx, gameFrame, movementHandler, player, cpu} from "./gameFramework.js";
 
 const staggerFrame = 5;
 
 const c = myCanvas;
 const cWidth = c.width; 
 const cHeight = c.height;
-const ground = cHeight;
+const ground = cHeight-80;
 const gravity = {x: .27, y: 0.5};
 
 
 class character{
-    constructor(x, y, moveinc = 5,){
+    constructor(x, y, moveinc = 5, isPlayer = false){
         this.x = x;
         this.y = y;
         this.img = new Image();
@@ -20,13 +20,23 @@ class character{
             width: 0,
             height: 0,
         }
+        this.attackCollider = {
+            x: this.spriteCollider.x,
+            y: this.spriteCollider.y,
+            height: this.spriteCollider.height,
+            width: this.spriteCollider.width,
+        }
+        this.currentAttack = 0;
+        this.currentAttackDmg = 0;
+        this.damageFrame = 0;
         this.inAir = false;
         this.attacking = false;
         this.attacked = false;
-        this.idle = true;
         this.direction = 1; // 1 right, -1 left
         this.koed = false;
         this.moveinc = moveinc;
+        this.isPlayer = isPlayer;
+        this.enemy = null;
         this.vel = {
             x: 0,
             y: 0,
@@ -37,13 +47,11 @@ class character{
     moveLeft() {
         if(this.vel.x > -this.moveinc) this.vel.x -=.6;
         this.direction = -1;
-        this.idle = false;
     }
     
     moveRight() {
         if(this.vel.x < this.moveinc) this.vel.x +=.6;
         this.direction = 1;
-        this.idle = false;
     }
     
     
@@ -60,7 +68,6 @@ class character{
             if (this.inAir) this.vel.x += gravity.x*15/16
         }
         if(this.vel.y != 0) {
-            this.idle = false;
             this.inAir = true;
         } 
         
@@ -94,8 +101,9 @@ class character{
     update(){
         //Update the physics with inputs from last frame/tick
         this.physUpdate()
-        //Checks for incoming attacks
-        
+        //Update Enemy Pos
+        if(this.isPlayer) this.enemy = cpu;
+        else this.enemy = player;
         //Grab the inputs from this frame
         movementHandler()
         //Check for attacks last so you can attack in mid air
@@ -120,8 +128,8 @@ class character{
         this.inAir = true
     }
     
-    intersects(obj){
-        if (this.spriteCollider.x < obj.spriteCollider.x + obj.spriteCollider.width && this.spriteCollider.x + this.spriteCollider.width > obj.x && this.y < obj.y + obj.height && this.y + this.height > obj.y) {
+    attackIntersects(obj){
+        if (this.attackCollider.x < obj.spriteCollider.x + obj.spriteCollider.width && this.attackCollider.x + this.attackCollider.width > obj.spriteCollider.x && this.attackCollider.y < obj.spriteCollider.y + obj.spriteCollider.height && this.attackCollider.y + this.attackCollider.height > obj.spriteCollider.y) {
             return true;
         }
         else {
@@ -179,6 +187,7 @@ export class wizard extends character {
         if(this.attacking) return;
         this.img.src = this.imgPath+'/Attack1.png';
         this.charFrame = 0;
+        this.damageFrame = 7;
         this.totalFrames = 7;
         this.attacking = true;
     }
@@ -187,6 +196,7 @@ export class wizard extends character {
         if(this.attacking) return;
         this.img.src = this.imgPath+'/Attack2.png';
         this.charFrame = 0;
+        this.damageFrame = 7;
         this.totalFrames = 7;
         this.attacking = true;
     }
@@ -205,7 +215,7 @@ export class wizard extends character {
         //Eveything below handles a majority of the animation logic
 
         //Checks if the conditions are met runs the animation then returns otherwise 
-        if(this.health <= 0 && !this.koed){
+        if(this.health <= 0){
             if(!this.koed) this.charFrame = 0;
             this.img.src = this.imgPath+'/Death.png'
             this.totalFrames = 6;
@@ -221,7 +231,10 @@ export class wizard extends character {
         }
         
         if(this.attacking) {
-            if(this.charFrame == this.totalFrames) this.attacking = false;
+            if(this.charFrame == this.totalFrames) {
+                this.attacking = false;
+                this.currentAttack = 0;
+            }
             return;
         }
         
@@ -245,7 +258,6 @@ export class wizard extends character {
 
         else{
             this.img.src = this.imgPath+'/Idle.png'
-            this.idle = true
             this.totalFrames = 7;
             return;
         }
@@ -278,13 +290,20 @@ export class windElemental extends character{
     }
 
     attack1(){
-        // Damage of 7
         if(this.attacking) return;
         if(this.inAir) {
+            // Damage of 6
+            this.currentAttack = 3
+            this.damageFrame = 2;
+            this.currentAttackDmg = 6;
             this.animationcolumn = 5
             this.totalFrames = 6;
         }
         else {
+            // Damage of 15
+            this.currentAttack = 1;
+            this.currentAttackDmg = 15;
+            this.damageFrame = 4;
             this.animationcolumn = 8
             this.totalFrames = 15;
         }
@@ -292,8 +311,11 @@ export class windElemental extends character{
         this.attacking = true;
     }
     attack2(){
-        // Damage of 15
+        // Damage of 4
         if(this.attacking) return;
+        this.currentAttack = 2;
+        this.currentAttackDmg = 4;
+        this.damageFrame = 5;
         this.animationcolumn = 10;
         this.charFrame = 0;
         this.totalFrames = 13;
@@ -329,7 +351,66 @@ export class windElemental extends character{
         }
         
         if(this.attacking) {
-            if(this.charFrame == this.totalFrames) this.attacking = false;
+            if(this.charFrame == this.damageFrame){
+                if(this.currentAttack == 1){
+                    if(this.direction == -1) {
+                        this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
+                        this.attackCollider.width = this.spriteCollider.width*1.2
+                    }
+                    if(this.direction == 1) {
+                        this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                        this.attackCollider.width = this.spriteCollider.width*1.2;
+                    }
+                    this.attackCollider.y = this.spriteCollider.y;
+                    this.attackCollider.height = this.spriteCollider.height;
+                    console.log(this.attackIntersects(cpu))
+                    if(this.attackIntersects(cpu) && !cpu.koed) {
+                        cpu.charFrame = 0;
+                        cpu.health -= this.currentAttackDmg;
+                        cpu.attacked = true;
+                    }
+                }
+                if(this.currentAttack == 2){
+                    if(this.direction == -1) {
+                        this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
+                        this.attackCollider.width = this.spriteCollider.width*2.8
+                    }
+                    if(this.direction == 1) {
+                        this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                        this.attackCollider.width = this.spriteCollider.width*2.8;
+                    }
+                    this.attackCollider.y = this.spriteCollider.y;
+                    this.attackCollider.height = this.spriteCollider.height;
+                    console.log(this.attackIntersects(cpu))
+                    if(this.attackIntersects(cpu) && !cpu.koed) {
+                        cpu.charFrame = 0;
+                        cpu.health -= this.currentAttackDmg;
+                        cpu.attacked = true;
+                    }
+                }
+                if(this.currentAttack == 3){
+                    if(this.direction == -1) {
+                        this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
+                        this.attackCollider.width = this.spriteCollider.width*1.5
+                    }
+                    if(this.direction == 1) {
+                        this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                        this.attackCollider.width = this.spriteCollider.width*1.5;
+                    }
+                    this.attackCollider.y = this.spriteCollider.y;
+                    this.attackCollider.height = this.spriteCollider.height;
+                    console.log(this.attackIntersects(cpu))
+                    if(this.attackIntersects(cpu) && !cpu.koed) {
+                        cpu.charFrame = 0;
+                        cpu.health -= this.currentAttackDmg;
+                        cpu.attacked = true;
+                    }
+                }
+            }
+            if(this.charFrame == this.totalFrames) {
+                this.attacking = false;
+                this.currentAttack = 0;
+            }
             return;
         }
         
@@ -353,7 +434,6 @@ export class windElemental extends character{
 
         else{
             this.animationcolumn = 1
-            this.idle = true
             this.totalFrames = 7;
             return;
         }
@@ -362,8 +442,12 @@ export class windElemental extends character{
 
     //Draw Sprite
     draw(){
+        //Attack Collider
+        ctx.fillStyle = 'red'
         //Collider
-        ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+        ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
+        ctx.fillStyle = 'black'
+        // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
     

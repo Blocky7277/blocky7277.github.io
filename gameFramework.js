@@ -29,7 +29,8 @@ const SPRITE_PATH_ARRAY = [
 ]
 
 
-var player = new characters.windElemental(0, 0,)
+export var player = new characters.windElemental(0, 0, 8, true)
+export var cpu = new characters.wizard(0, 0, 5)
 console.log(player)
 
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P
@@ -58,6 +59,7 @@ function gameUpdate() {
     gameFrame++
 
     player.update()
+    cpu.update()
         
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
@@ -76,7 +78,7 @@ function gameDraw(){
     //DRAW STATEMENTS
     ctx.drawImage(background, 0, 0, cWidth, cHeight);
     player.draw()
-    
+    cpu.draw()
     
 }
 
