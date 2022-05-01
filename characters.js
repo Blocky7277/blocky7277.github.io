@@ -36,7 +36,6 @@ class character{
         this.koed = false;
         this.moveinc = moveinc;
         this.isPlayer = isPlayer;
-        this.enemy = null;
         this.vel = {
             x: 0,
             y: 0,
@@ -101,9 +100,6 @@ class character{
     update(){
         //Update the physics with inputs from last frame/tick
         this.physUpdate()
-        //Update Enemy Pos
-        if(this.isPlayer) this.enemy = cpu;
-        else this.enemy = player;
         //Grab the inputs from this frame
         movementHandler()
         //Check for attacks last so you can attack in mid air
@@ -448,7 +444,8 @@ export class windElemental extends character{
         }
         
         if(this.attacking) {
-            this.attackLogicPlayer()
+            if(this.isPlayer) this.attackLogicPlayer()
+            else this.attackLogicCPU()
             console.log(cpu.health)
             if(this.charFrame == this.totalFrames) {
                 this.attacking = false;
