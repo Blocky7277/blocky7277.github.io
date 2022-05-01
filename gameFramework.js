@@ -5,6 +5,12 @@ export const ctx = c.getContext("2d");
 const cWidth = c.width; 
 const cHeight = c.height;
 const fps = 60;
+const map1 = { 
+    image: background, //img
+    platform1: null, //obj
+    platform2: null, //obj
+    ground: cHeight-80, //Y- Coord CHeight - somthing
+}
 const background = new Image();
 background.src = './backgrounds/cyberpunk-street.png'
 
@@ -79,7 +85,7 @@ function gameDraw(){
     ctx.drawImage(background, 0, 0, cWidth, cHeight);
     player.draw()
     cpu.draw()
-    
+    cpu.attack1()
 }
 
 export function movementHandler() {
@@ -106,9 +112,18 @@ export function attackHandler(){
     if(newkeys[key_codes.attack_1]) { // Attack 1 Button
         player.attack1()
     }
-    if(newkeys[key_codes.attack_2]) { // Attack 2 Button
+    else if(newkeys[key_codes.attack_2]) { // Attack 2 Button
         player.attack2()
     }
+}
+
+function updateTitleScreen(){
+    player.attack2()
+    cpu.attack2()
+}
+function drawTitleScreen(){
+    player.draw()
+    cpu.draw()
 }
 
 initialize();
