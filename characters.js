@@ -10,15 +10,11 @@ const gravity = {x: .3, y: 0.5};
 
 
 class character{
-    constructor(x, y, moveinc = 5, isPlayer = false){
+    constructor(x, y, moveinc = 5, isPlayer = false, direction = 1){
         this.x = x;
         this.y = y;
         this.img = new Image();
         this.spriteCollider = {
-            x: 0, 
-            y: 0,
-            width: 0,
-            height: 0,
         }
         this.attackCollider = {
             x: this.spriteCollider.x,
@@ -32,7 +28,7 @@ class character{
         this.inAir = false;
         this.attacking = false;
         this.attacked = false;
-        this.direction = 1; // 1 right, -1 left
+        this.direction = direction; // 1 right, -1 left
         this.koed = false;
         this.moveinc = moveinc;
         this.isPlayer = isPlayer;
@@ -135,8 +131,8 @@ class character{
 }
 
 export class wizard extends character {
-    constructor(x, y, moveinc,){
-        super(x, y, moveinc,);
+    constructor(x, y, moveinc, isPlayer, direction){
+        super(x, y, moveinc, isPlayer, direction);
         this.health = 50;
         this.imgPath = './sprites/mahonohito';
         this.img.src = this.imgPath+'/Idle.png';
@@ -180,7 +176,10 @@ export class wizard extends character {
     
     attack1(){
         // Damage of 10
-        if(this.attacking) return;
+        if(this.attacking || this.inAir) return;
+        this.currentAttack = 1;
+        this.currentAttackDmg = 10;
+        this.damageFrame = 5;
         this.img.src = this.imgPath+'/Attack1.png';
         this.charFrame = 0;
         this.damageFrame = 7;
@@ -189,7 +188,10 @@ export class wizard extends character {
     }
     attack2(){
         // Damage of 20
-        if(this.attacking) return;
+        if(this.attacking || this.inAir) return;
+        this.currentAttack = 2;
+        this.currentAttackDmg = 20;
+        this.damageFrame = 5;
         this.img.src = this.imgPath+'/Attack2.png';
         this.charFrame = 0;
         this.damageFrame = 7;
@@ -197,6 +199,92 @@ export class wizard extends character {
         this.attacking = true;
     }
     
+    attackLogicPlayer(){
+        if(this.currentAttack == 1){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
+                this.attackCollider.width = this.spriteCollider.width*1.2
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*1.2;
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;  
+        }
+        else if(this.currentAttack == 2){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
+                this.attackCollider.width = this.spriteCollider.width*2.8
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*2.8;
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        else if(this.currentAttack == 3){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
+                this.attackCollider.width = this.spriteCollider.width*1.5
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*1.5;
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        if(this.attackIntersects(cpu) && !cpu.koed) {
+            cpu.charFrame = 0;
+            cpu.health -= this.currentAttackDmg;
+            cpu.attacked = true;
+        }
+    }
+    attackLogicCPU(){
+        if(this.currentAttack == 1){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
+                this.attackCollider.width = this.spriteCollider.width*1.2
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*1.2;
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;  
+        }
+        else if(this.currentAttack == 2){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
+                this.attackCollider.width = this.spriteCollider.width*2.8
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*2.8;
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        else if(this.currentAttack == 3){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
+                this.attackCollider.width = this.spriteCollider.width*1.5
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*1.5;
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        if(this.attackIntersects(player) && !player.koed) {
+            player.charFrame = 0;
+            player.health -= this.currentAttackDmg;
+            player.attacked = true;
+        }
+    }
     
     animationUpdate(){
         //Staggers the frames so the animations don't play too fast
@@ -263,13 +351,9 @@ export class wizard extends character {
 }
 
 export class windElemental extends character{
-    constructor(x, y, moveinc,){
-        super(x, y, moveinc,);
+    constructor(x, y, moveinc, isPlayer, direction){
+        super(x, y, moveinc, isPlayer, direction);
         this.spriteCollider = {
-            x: 0, 
-            y: 0,
-            width: 0,
-            height: 0,
         }
         this.health = 75
         this.animationcolumn = 0;
@@ -278,7 +362,7 @@ export class windElemental extends character{
         this.spriteHeight = 128;
         this.spriteOffsetX = 160;
         this.spriteOffsetY = 113;
-        this.drawOffsetX = 0;
+        this.drawOffsetX = 15;
         this.drawOffsetY = 0;
         this.spriteColliderWidth = 35;
         this.spriteColliderHeight = 46;
@@ -319,93 +403,89 @@ export class windElemental extends character{
     }
 
     attackLogicPlayer(){
-        if(this.charFrame == this.damageFrame){
-            if(this.currentAttack == 1){
-                if(this.direction == -1) {
-                    this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
-                    this.attackCollider.width = this.spriteCollider.width*1.2
-                }
-                else if(this.direction == 1) {
-                    this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                    this.attackCollider.width = this.spriteCollider.width*1.2;
-                }
-                this.attackCollider.y = this.spriteCollider.y;
-                this.attackCollider.height = this.spriteCollider.height;  
+        if(this.currentAttack == 1){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
+                this.attackCollider.width = this.spriteCollider.width*1.2
             }
-            else if(this.currentAttack == 2){
-                if(this.direction == -1) {
-                    this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
-                    this.attackCollider.width = this.spriteCollider.width*2.8
-                }
-                else if(this.direction == 1) {
-                    this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                    this.attackCollider.width = this.spriteCollider.width*2.8;
-                }
-                this.attackCollider.y = this.spriteCollider.y;
-                this.attackCollider.height = this.spriteCollider.height;
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*1.2;
             }
-            else if(this.currentAttack == 3){
-                if(this.direction == -1) {
-                    this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
-                    this.attackCollider.width = this.spriteCollider.width*1.5
-                }
-                else if(this.direction == 1) {
-                    this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                    this.attackCollider.width = this.spriteCollider.width*1.5;
-                }
-                this.attackCollider.y = this.spriteCollider.y;
-                this.attackCollider.height = this.spriteCollider.height;
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;  
+        }
+        else if(this.currentAttack == 2){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
+                this.attackCollider.width = this.spriteCollider.width*2.8
             }
-            if(this.attackIntersects(cpu) && !cpu.koed) {
-                cpu.charFrame = 0;
-                cpu.health -= this.currentAttackDmg;
-                cpu.attacked = true;
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*2.8;
             }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        else if(this.currentAttack == 3){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
+                this.attackCollider.width = this.spriteCollider.width*1.5
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*1.5;
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        if(this.attackIntersects(cpu) && !cpu.koed) {
+            cpu.charFrame = 0;
+            cpu.health -= this.currentAttackDmg;
+            cpu.attacked = true;
         }
     }
     attackLogicCPU(){
-        if(this.charFrame == this.damageFrame){
-            if(this.currentAttack == 1){
-                if(this.direction == -1) {
-                    this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
-                    this.attackCollider.width = this.spriteCollider.width*1.2
-                }
-                else if(this.direction == 1) {
-                    this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                    this.attackCollider.width = this.spriteCollider.width*1.2;
-                }
-                this.attackCollider.y = this.spriteCollider.y;
-                this.attackCollider.height = this.spriteCollider.height;  
+        if(this.currentAttack == 1){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
+                this.attackCollider.width = this.spriteCollider.width*1.2
             }
-            else if(this.currentAttack == 2){
-                if(this.direction == -1) {
-                    this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
-                    this.attackCollider.width = this.spriteCollider.width*2.8
-                }
-                else if(this.direction == 1) {
-                    this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                    this.attackCollider.width = this.spriteCollider.width*2.8;
-                }
-                this.attackCollider.y = this.spriteCollider.y;
-                this.attackCollider.height = this.spriteCollider.height;
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*1.2;
             }
-            else if(this.currentAttack == 3){
-                if(this.direction == -1) {
-                    this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
-                    this.attackCollider.width = this.spriteCollider.width*1.5
-                }
-                else if(this.direction == 1) {
-                    this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                    this.attackCollider.width = this.spriteCollider.width*1.5;
-                }
-                this.attackCollider.y = this.spriteCollider.y;
-                this.attackCollider.height = this.spriteCollider.height;
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;  
+        }
+        else if(this.currentAttack == 2){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
+                this.attackCollider.width = this.spriteCollider.width*2.8
             }
-            if(this.attackIntersects(player) && !player.koed) {
-                player.charFrame = 0;
-                player.health -= this.currentAttackDmg;
-                player.attacked = true;
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*2.8;
             }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        else if(this.currentAttack == 3){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
+                this.attackCollider.width = this.spriteCollider.width*1.5
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
+                this.attackCollider.width = this.spriteCollider.width*1.5;
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        if(this.attackIntersects(player) && !player.koed) {
+            player.charFrame = 0;
+            player.health -= this.currentAttackDmg;
+            player.attacked = true;
         }
     }
     
@@ -444,9 +524,10 @@ export class windElemental extends character{
         }
         
         if(this.attacking) {
-            if(this.isPlayer) this.attackLogicPlayer()
-            else this.attackLogicCPU()
-            console.log(cpu.health)
+            if(this.charFrame == this.damageFrame){
+                if(this.isPlayer) this.attackLogicPlayer()
+                else this.attackLogicCPU()
+            }
             if(this.charFrame == this.totalFrames) {
                 this.attacking = false;
                 this.currentAttack = 0;

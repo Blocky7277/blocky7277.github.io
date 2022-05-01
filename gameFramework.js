@@ -5,13 +5,13 @@ export const ctx = c.getContext("2d");
 const cWidth = c.width; 
 const cHeight = c.height;
 const fps = 60;
+const background = new Image();
 const map1 = { 
     image: background, //img
     platform1: null, //obj
     platform2: null, //obj
     ground: cHeight-80, //Y- Coord CHeight - somthing
 }
-const background = new Image();
 background.src = './backgrounds/cyberpunk-street.png'
 
 
@@ -35,9 +35,8 @@ const SPRITE_PATH_ARRAY = [
 ]
 
 
-export var player = new characters.windElemental(0, 0, 8, true)
-export var cpu = new characters.wizard(0, 0, 5)
-console.log(player)
+export var player = new characters.wizard(0, 0, 8, true)
+export var cpu = new characters.windElemental(cWidth, 0, 5, false, -1)
 
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P
 var arrowKeys = [37, 39, 81, 87] // Left, Right, Q, W
@@ -55,15 +54,15 @@ function initialize(){
     window.addEventListener('keydown', function(e){ if(!curkeys[e.keyCode]){
         curkeys[e.keyCode] = true; 
         newkeys[e.keyCode] = true;}})
-    window.addEventListener('keyup', function(e){ curkeys[e.keyCode] = false;})
-
-    window.requestAnimationFrame(gameUpdate);
-}
-
+        window.addEventListener('keyup', function(e){ curkeys[e.keyCode] = false;})
+        
+        window.requestAnimationFrame(gameUpdate);
+    }
+    
 function gameUpdate() {
     //GAME UPDATE LOGIC
     gameFrame++
-
+        
     player.update()
     cpu.update()
         
@@ -85,7 +84,7 @@ function gameDraw(){
     ctx.drawImage(background, 0, 0, cWidth, cHeight);
     player.draw()
     cpu.draw()
-    cpu.attack1()
+    cpu.attack2()
 }
 
 export function movementHandler() {
