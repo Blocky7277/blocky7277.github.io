@@ -16,7 +16,7 @@ background.src = './backgrounds/cyberpunk-street.png'
 
 
 import * as characters from "./characters.js";
-import * as utilityJs from "./utilityClassesAndFunctions.js"
+import * as util from "./utilityClassesAndFunctions.js"
 
 // The keycode events
 // When the key is pressed it will stay true
@@ -27,7 +27,7 @@ var newkeys = [];
 //Game States 0: title screen, 1: settings, 2: instructions, 3: playing -1: lose, 3: win, .5: pause,
 var gameState = 0;
 export var gameFrame = 0;
-var testTimer = new utilityJs.Timer(5000);
+var testTimer = new util.Timer(5000);
 const SPRITE_PATH_ARRAY = [
     './sprites/mahonohito', // Wizard
     './sprites/kazeyoke/wind_SpriteSheet_288x128.png', // Wind Breaker
@@ -84,7 +84,6 @@ function gameDraw(){
     ctx.drawImage(background, 0, 0, cWidth, cHeight);
     player.draw()
     cpu.draw()
-    cpu.attack2()
 }
 
 export function movementHandler() {

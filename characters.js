@@ -1,4 +1,5 @@
 import {attackHandler, ctx, gameFrame, movementHandler, player, cpu} from "./gameFramework.js";
+import { Timer } from "./utilityClassesAndFunctions.js";
 
 const staggerFrame = 5;
 
@@ -149,7 +150,11 @@ export class wizard extends character {
     
     //Draw Sprite
     draw(){
+        //Attack Collider
+        ctx.fillStyle = 'red'
         //Collider
+        ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
+        ctx.fillStyle = 'black'
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
@@ -179,7 +184,7 @@ export class wizard extends character {
         if(this.attacking || this.inAir) return;
         this.currentAttack = 1;
         this.currentAttackDmg = 10;
-        this.damageFrame = 5;
+        this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack1.png';
         this.charFrame = 0;
         this.damageFrame = 7;
@@ -191,7 +196,7 @@ export class wizard extends character {
         if(this.attacking || this.inAir) return;
         this.currentAttack = 2;
         this.currentAttackDmg = 20;
-        this.damageFrame = 5;
+        this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack2.png';
         this.charFrame = 0;
         this.damageFrame = 7;
@@ -203,13 +208,13 @@ export class wizard extends character {
         if(this.currentAttack == 1){
             if(this.direction == -1) {
                 this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
-                this.attackCollider.width = this.spriteCollider.width*1.2
+                this.attackCollider.width = this.spriteCollider.width*2.8
             }
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*1.2;
+                this.attackCollider.width = this.spriteCollider.width*2.4;
             }
-            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.y = this.spriteCollider.y-15;
             this.attackCollider.height = this.spriteCollider.height;  
         }
         else if(this.currentAttack == 2){
@@ -220,18 +225,6 @@ export class wizard extends character {
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
                 this.attackCollider.width = this.spriteCollider.width*2.8;
-            }
-            this.attackCollider.y = this.spriteCollider.y;
-            this.attackCollider.height = this.spriteCollider.height;
-        }
-        else if(this.currentAttack == 3){
-            if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
-                this.attackCollider.width = this.spriteCollider.width*1.5
-            }
-            else if(this.direction == 1) {
-                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*1.5;
             }
             this.attackCollider.y = this.spriteCollider.y;
             this.attackCollider.height = this.spriteCollider.height;
@@ -263,18 +256,6 @@ export class wizard extends character {
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
                 this.attackCollider.width = this.spriteCollider.width*2.8;
-            }
-            this.attackCollider.y = this.spriteCollider.y;
-            this.attackCollider.height = this.spriteCollider.height;
-        }
-        else if(this.currentAttack == 3){
-            if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.5
-                this.attackCollider.width = this.spriteCollider.width*1.5
-            }
-            else if(this.direction == 1) {
-                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*1.5;
             }
             this.attackCollider.y = this.spriteCollider.y;
             this.attackCollider.height = this.spriteCollider.height;
@@ -315,6 +296,10 @@ export class wizard extends character {
         }
         
         if(this.attacking) {
+            if(this.charFrame == this.damageFrame){
+                if(this.isPlayer) this.attackLogicPlayer()
+                else this.attackLogicCPU()
+            }
             if(this.charFrame == this.totalFrames) {
                 this.attacking = false;
                 this.currentAttack = 0;
@@ -566,7 +551,7 @@ export class windElemental extends character{
         //Attack Collider
         ctx.fillStyle = 'red'
         //Collider
-        ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
+        // ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
         ctx.fillStyle = 'black'
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
