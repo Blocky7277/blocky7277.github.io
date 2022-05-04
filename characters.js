@@ -106,6 +106,14 @@ class character{
         
     }
     
+    updateTitle(){
+        //Update the physics with inputs from last frame/tick
+        this.physUpdate()
+        //Updates Animations
+        this.animationUpdate()
+        
+    }
+    
     colliderUpdate(){
         this.spriteCollider = {
             x: this.x+this.spriteOffsetX, 
@@ -153,7 +161,7 @@ export class wizard extends character {
         //Attack Collider
         ctx.fillStyle = 'red'
         //Collider
-        ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
+        // ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
         ctx.fillStyle = 'black'
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
@@ -183,7 +191,7 @@ export class wizard extends character {
         // Damage of 10
         if(this.attacking || this.inAir) return;
         this.currentAttack = 1;
-        this.currentAttackDmg = 10;
+        this.currentAttackDmg = 7;
         this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack1.png';
         this.charFrame = 0;
@@ -192,10 +200,10 @@ export class wizard extends character {
         this.attacking = true;
     }
     attack2(){
-        // Damage of 20
+        // Damage of 17
         if(this.attacking || this.inAir) return;
         this.currentAttack = 2;
-        this.currentAttackDmg = 20;
+        this.currentAttackDmg = 12;
         this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack2.png';
         this.charFrame = 0;
@@ -214,8 +222,8 @@ export class wizard extends character {
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
                 this.attackCollider.width = this.spriteCollider.width*2.4;
             }
-            this.attackCollider.y = this.spriteCollider.y-15;
-            this.attackCollider.height = this.spriteCollider.height;  
+            this.attackCollider.y = this.spriteCollider.y-40;
+            this.attackCollider.height = this.spriteCollider.height+20;  
         }
         else if(this.currentAttack == 2){
             if(this.direction == -1) {

@@ -12,7 +12,7 @@ const map1 = {
     platform2: null, //obj
     ground: cHeight-80, //Y- Coord CHeight - somthing
 }
-background.src = './backgrounds/cyberpunk-street.png'
+background.src = './backgrounds/flatNightBG.png'
 
 
 import * as characters from "./characters.js";
@@ -24,18 +24,14 @@ var curkeys = [];
 // Only true for one frame
 var newkeys = [];
 
-//Game States 0: title screen, 1: settings, 2: instructions, 3: playing -1: lose, 3: win, .5: pause,
+//Game States 0: title screen, 1: settings, 2: instructions, 3: character select 4: play -1: lose, 5: win, .5: pause,
 var gameState = 0;
 export var gameFrame = 0;
-var testTimer = new util.Timer(5000);
-const SPRITE_PATH_ARRAY = [
-    './sprites/mahonohito', // Wizard
-    './sprites/kazeyoke/wind_SpriteSheet_288x128.png', // Wind Breaker
-    './sprites/tetsuryu/metal_bladekeeper_FREE_v1.1_SpriteSheet_288x128.png'
-]
+var splashState = !true;
+var arrowkeybinds = true;
 
 
-export var player = new characters.wizard(0, 0, 8, true)
+export var player = new characters.wizard(-100, 0, 8, true)
 export var cpu = new characters.windElemental(cWidth, 0, 5, false, -1)
 
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P
@@ -49,8 +45,45 @@ var key_codes = { // Defaults to arrow keys
     jump: 32 // Spacebar
 }
 
-function initialize(){
+var menuOptionNumber = 0
+var menuOptions = [{ 
+    number: 1, // Start
+    arrowOffset: -130,
+    height: -60,
+}, 
+{
+    number: 2, // Options
+    arrowOffset: -160,
+    height: +50,
+}, 
+{
+    number: 3, // Instructions
+    arrowOffset: -210,
+    height: +170,
+}]
 
+var settingsOptionNumber = 0
+var settingsOptions = [{ 
+    number: 1, // WASD
+    value: checkArrowKeys(),
+    arrowOffset: -130,
+    height: -60,
+}, 
+{
+    number: 2, // VOLUME MUSIC
+    arrowOffset: -190,
+    value: 10,
+    height: +50,
+}, 
+{
+    number: 3, // VOLUME SFX
+    arrowOffset: -210,
+    value: 10,
+    height: +170,
+}]
+
+function initialize(){
+    
     window.addEventListener('keydown', function(e){ if(!curkeys[e.keyCode]){
         curkeys[e.keyCode] = true; 
         newkeys[e.keyCode] = true;}})
@@ -62,28 +95,29 @@ function initialize(){
 function gameUpdate() {
     //GAME UPDATE LOGIC
     gameFrame++
-        
-    player.update()
-    cpu.update()
-        
+
+    if(gameState == 0 && !splashState) updateTitleScreen()
+    else if(gameState == 1) updateOptions()
+    else if(gameState == 2) updateInstruction()
+    
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
         newkeys[i] = false
     }
     gameDraw();
-
+    
     //FPS throttling for consistant gameplay across devices
     setTimeout(() => {
         requestAnimationFrame(gameUpdate);
-      }, 1000 / fps);
+    }, 1000 / fps);
 }
 
 function gameDraw(){
     ctx.clearRect(0, 0, cWidth, cHeight);
     //DRAW STATEMENTS
-    ctx.drawImage(background, 0, 0, cWidth, cHeight);
-    player.draw()
-    cpu.draw()
+    if(gameState == 0 && !splashState) drawTitleScreen()
+    if(gameState == 1) drawOptionsScreen()
+    if(gameState == 2) drawInstructionScreen()
 }
 
 export function movementHandler() {
@@ -115,13 +149,128 @@ export function attackHandler(){
     }
 }
 
+function checkArrowKeys(){
+    if(arrowkeybinds){ 
+        key_codes.left = arrowKeys[0]
+        key_codes.right = arrowKeys[1]
+        key_codes.attack_1 = arrowKeys[3]
+        key_codes.attack_2 = arrowKeys[4]
+        return 'Arrows'
+    }
+    else{
+        key_codes.left = wasdKeys[0]
+        key_codes.right = wasdKeys[1]
+        key_codes.attack_1 = wasdKeys[3]
+        key_codes.attack_2 = wasdKeys[4]
+        return 'WASD'
+        }
+}
+
 function updateTitleScreen(){
-    player.attack2()
+    player.updateTitle()
+    cpu.updateTitle()
+    player.attack1()
     cpu.attack2()
+    if(newkeys[40]) {
+        menuOptionNumber++
+        if(menuOptionNumber > 2) menuOptionNumber = 0;
+    }
+    else if(newkeys[38]) {
+        menuOptionNumber--
+        if(menuOptionNumber < 0) menuOptionNumber = 2;
+    }
+    else if(newkeys[13]) {
+        if([menuOptionNumber].number == 1) {gameState = 3}
+        if(menuOptions[menuOptionNumber].number == 2) {gameState = 1}
+        if(menuOptions[menuOptionNumber].number == 3) {gameState = 2;}
+    }
 }
 function drawTitleScreen(){
+    ctx.drawImage(background, 0, 0, cWidth, cHeight);
     player.draw()
     cpu.draw()
+    ctx.fillStyle = 'white'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '100px ArcadeClassic'
+    ctx.fillText('A l l e y  B r a w l e r', cWidth/2, cHeight/2-160)
+    ctx.font = '60px ArcadeClassic'
+    ctx.fillText('>', cWidth/2+menuOptions[menuOptionNumber].arrowOffset, cHeight/2+menuOptions[menuOptionNumber].height)
+    ctx.fillText('S T A R T', cWidth/2, cHeight/2-60)
+    ctx.fillText('O P T I O N S', cWidth/2, cHeight/2+50)
+    ctx.fillText('H O W  T O  P L A Y', cWidth/2, cHeight/2+170)
+    ctx.font = '20px ArcadeClassic'
+    ctx.fillText('Use  arrow  keys  to  move  and  enter  to  select', cWidth/2, cHeight/2+290)
+}
+
+function updateInstruction(){
+    player.updateTitle()
+    cpu.updateTitle()
+    if(newkeys[27]) gameState = 0;
+}
+
+function drawInstructionScreen(){
+    ctx.drawImage(background, 0, 0, cWidth, cHeight);
+    player.draw()
+    cpu.draw()
+    ctx.fillStyle = 'white'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = 'rgba(0, 0, 0, .5)'
+    ctx.fillRect(0, 0, cWidth, cHeight)
+    ctx.fillStyle = 'white'
+    ctx.font = '100px ArcadeClassic'
+    ctx.fillText('A l l e y  B r a w l e r', cWidth/2, cHeight/2-160)
+    ctx.font = '25px ArcadeClassic'
+    ctx.fillText('Use  arrow  keys  or  WASD  to  move  (depending  on  your  settings).', cWidth/2, cHeight/2-75)
+    ctx.fillText('To  attack  press  Q  and  W  for  Arrow  Keys  and  O  and  P  for  WASD  and  press  Space  to  jump.', cWidth/2, cHeight/2-25)
+    ctx.fillText('Attack  the  opponent  to  lower  their  HP.  When  their  HP  is 0  you win,  if  your  HP  reaches  0  you  lose', cWidth/2, cHeight/2+25)
+    ctx.fillText('(Note:  If  you  change  your  movement  binds  the  menu  will  still  only  navigate  with  arrow  keys)', cWidth/2, cHeight/2+75)
+    ctx.fillText('Good  Luck  Have  Fun', cWidth/2, cHeight/2+125)
+    ctx.font = '20px ArcadeClassic'
+    ctx.fillText('Press  ESC  to  go  back', cWidth/2, cHeight/2+290)
+}
+
+function updateOptions(){
+    player.updateTitle()
+    cpu.updateTitle()
+    if(newkeys[27]) gameState = 0;
+    else if(newkeys[40]) {
+        settingsOptionNumber++
+        if(settingsOptionNumber > 2) settingsOptionNumber = 0;
+    }
+    else if(newkeys[38]) {
+        settingsOptionNumber--
+        if(settingsOptionNumber < 0) settingsOptionNumber = 2;
+    }
+    else if(newkeys[37]) {
+        if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = ! arrowkeybinds;}
+        if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value-1 > 0)settingsOptions[settingsOptionNumber].value--}
+        if(settingsOptions[settingsOptionNumber].number == 3) if(settingsOptions[settingsOptionNumber].value-1 > 0){settingsOptions[settingsOptionNumber].value--}
+    }
+    else if(newkeys[39]) {
+        if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = ! arrowkeybinds;}
+        if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value+1 < 10)settingsOptions[settingsOptionNumber].value++}
+        if(settingsOptions[settingsOptionNumber].number == 3) {if(settingsOptions[settingsOptionNumber].value+1 < 10)settingsOptions[settingsOptionNumber].value++}
+    }
+}
+
+function drawOptionsScreen(){
+    ctx.drawImage(background, 0, 0, cWidth, cHeight);
+    player.draw()
+    cpu.draw()
+    ctx.fillStyle = 'white'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '100px ArcadeClassic'
+    ctx.fillText('A l l e y  B r a w l e r', cWidth/2, cHeight/2-160)
+    ctx.font = '60px ArcadeClassic'
+    ctx.fillText('>', cWidth/2+settingsOptions[settingsOptionNumber].arrowOffset, cHeight/2+settingsOptions[settingsOptionNumber].height)
+    ctx.fillText(`${checkArrowKeys()}`, cWidth/2, cHeight/2-60)
+    ctx.fillText(`SFX  Vol:  ${settingsOptions[1].value}`, cWidth/2, cHeight/2+50)
+    ctx.fillText(`Music Vol:  ${settingsOptions[2].value}`, cWidth/2, cHeight/2+170)
+    ctx.font = '20px ArcadeClassic'
+    ctx.fillText('Use  arrow  keys  to  move  and  enter  to  select', cWidth/2, cHeight/2+290)
 }
 
 initialize();
