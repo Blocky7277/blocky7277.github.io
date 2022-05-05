@@ -37,7 +37,7 @@ var newkeys = [];
 //Game States 0: title screen, 1: settings, 2: instructions, 3: character select 4: play -1: lose, 5: win, .5: pause,
 var gameState = 0;
 export var gameFrame = 0;
-var splashState = !true;
+var splashState = false;
 var arrowkeybinds = true;
 
 //Assigning the player and CPU
@@ -96,8 +96,6 @@ var settingsOptions = [{
 }]
 
 //Character select stuff
-//Variable that checks if the player can select a character
-var canSelect = false;
 //Character they are hovering over
 var currChar = 0;
 //Array with each character
@@ -310,12 +308,30 @@ function drawOptionsScreen(){
 }
 
 function updateCharacterSelectScreen(){
-    if(newkeys[27]) gameState = 0;
     for (let i = 0; i < charArray.length; i++) {
         charArray[i].update();
         charArray[i].spriteCollider.x = cWidth*i/5+90;
         charArray[i].spriteCollider.y = cHeight-charArray[i].spriteCollider.height;
         charArray[i].updateXYFromCollider();
+    }
+    
+    if(newkeys[27]) gameState = 0;
+    else if(newkeys[37] && currChar > 0) currChar--;
+    else if(newkeys[39] && currChar < charArray.length-1) currChar++;
+    else if(newkeys[13]) {
+        player = charArray[currChar];
+        player.spriteCollider.x = 0;
+        player.spriteCollider.y = 0;
+        player.updateXYFromCollider();
+        player.isPlayer = true;
+        var rand  = util.getRandIntBetween(0, charArray.length-1);
+        console.log(rand, cpu)
+        cpu = charArray[rand];
+        cpu.x = cWidth;
+        cpu.y = 0
+        cpu.direction = -1
+        cpu.isPlayer = false;
+        gameState = 4;
     }
 }
 
@@ -326,9 +342,9 @@ function drawCharacterSelectScreen(){
     for (let i = 0; i < charArray.length; i++) {
         charArray[i].draw()
     }
-    ctx.font = '20px ArcadeClassic'
+    ctx.font = '50px ArcadeClassic'
     ctx.fillStyle = 'white'
-    ctx.fillText('>', cWidth/2+settingsOptions[settingsOptionNumber].arrowOffset, cHeight/2+settingsOptions[settingsOptionNumber].height)
+    ctx.fillText('v', charArray[currChar].spriteCollider.x+charArray[currChar].spriteCollider.width/2, cHeight*53/64)
 }
 
 function updatePlay(){

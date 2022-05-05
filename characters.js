@@ -404,11 +404,11 @@ export class windElemental extends character{
         if(this.currentAttack == 1){
             if(this.direction == -1) {
                 this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
-                this.attackCollider.width = this.spriteCollider.width*1.2
+                this.attackCollider.width = this.spriteCollider.width*1.4
             }
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*1.2;
+                this.attackCollider.width = this.spriteCollider.width*1.4;
             }
             this.attackCollider.y = this.spriteCollider.y;
             this.attackCollider.height = this.spriteCollider.height;  
@@ -563,7 +563,7 @@ export class windElemental extends character{
     draw(){
         //Attack Collider
         ctx.fillStyle = 'red'
-        //Collider
+        //Attack Collider
         // ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
         ctx.fillStyle = 'black'
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
