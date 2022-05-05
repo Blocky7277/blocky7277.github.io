@@ -5,14 +5,24 @@ export const ctx = c.getContext("2d");
 const cWidth = c.width; 
 const cHeight = c.height;
 const fps = 60;
-const background = new Image();
-const map1 = { 
-    image: background, //img
+const titleBackground = new Image();
+const map1 = {
+    image: new Image(), 
+    source: './backgrounds/flatNightBG.png', //img
     platform1: null, //obj
     platform2: null, //obj
     ground: cHeight-80, //Y- Coord CHeight - somthing
 }
-background.src = './backgrounds/flatNightBG.png'
+map1.image.src = map1.source;
+const map2 = { 
+    image: new Image(), 
+    source: './backgrounds/beach.png', //img
+    platform1: null, //obj
+    platform2: null, //obj
+    ground: cHeight-80, //Y- Coord CHeight - somthing
+}
+map2.image.src = map2.source;
+titleBackground.src = './backgrounds/flatNightBG.png'
 
 
 import * as characters from "./characters.js";
@@ -117,6 +127,7 @@ function gameUpdate() {
     else if(gameState == 1) updateOptions()
     else if(gameState == 2) updateInstruction()
     else if(gameState == 3) updateCharacterSelectScreen()
+    else if(gameState == 4) updatePlay()
     
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
@@ -137,6 +148,7 @@ function gameDraw(){
     if(gameState == 1) drawOptionsScreen()
     if(gameState == 2) drawInstructionScreen()
     if(gameState == 3) drawCharacterSelectScreen()
+    if(gameState == 4) drawPlay()
 }
 
 export function movementHandler() {
@@ -162,8 +174,11 @@ export function movementHandler() {
 export function attackHandler(){
     if(newkeys[key_codes.attack_1]) { // Attack 1 Button
         player.attack1()
+        console.log("Attack 1 Button")
+        console.log(key_codes)
     }
     else if(newkeys[key_codes.attack_2]) { // Attack 2 Button
+        console.log("Attack 2 Button")
         player.attack2()
     }
 }
@@ -172,15 +187,15 @@ function checkArrowKeys(){
     if(arrowkeybinds){ 
         key_codes.left = arrowKeys[0]
         key_codes.right = arrowKeys[1]
-        key_codes.attack_1 = arrowKeys[3]
-        key_codes.attack_2 = arrowKeys[4]
+        key_codes.attack_1 = arrowKeys[2]
+        key_codes.attack_2 = arrowKeys[3]
         return 'Arrows'
     }
     else{
         key_codes.left = wasdKeys[0]
         key_codes.right = wasdKeys[1]
-        key_codes.attack_1 = wasdKeys[3]
-        key_codes.attack_2 = wasdKeys[4]
+        key_codes.attack_1 = wasdKeys[2]
+        key_codes.attack_2 = wasdKeys[3]
         return 'WASD'
         }
 }
@@ -205,7 +220,7 @@ function updateTitleScreen(){
     }
 }
 function drawTitleScreen(){
-    ctx.drawImage(background, 0, 0, cWidth, cHeight);
+    ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight);
     player.draw()
     cpu.draw()
     ctx.fillStyle = 'white'
@@ -229,7 +244,7 @@ function updateInstruction(){
 }
 
 function drawInstructionScreen(){
-    ctx.drawImage(background, 0, 0, cWidth, cHeight);
+    ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight);
     player.draw()
     cpu.draw()
     ctx.fillStyle = 'white'
@@ -275,9 +290,11 @@ function updateOptions(){
 }
 
 function drawOptionsScreen(){
-    ctx.drawImage(background, 0, 0, cWidth, cHeight);
+    ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight);
     player.draw()
     cpu.draw()
+    ctx.fillStyle = 'rgba(0, 0, 0, .5)'
+    ctx.fillRect(0, 0, cWidth, cHeight)
     ctx.fillStyle = 'white'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -303,11 +320,25 @@ function updateCharacterSelectScreen(){
 }
 
 function drawCharacterSelectScreen(){
-    ctx.fillStyle = 'hsl(182, 100%, 37%)';
-    ctx.fillRect(0, cHeight*13/16, cWidth, cHeight)
+    ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight)
+    ctx.fillStyle = '#322758';
+    ctx.fillRect(0, cHeight*55/64, cWidth, cHeight)
     for (let i = 0; i < charArray.length; i++) {
         charArray[i].draw()
     }
+    ctx.font = '20px ArcadeClassic'
+    ctx.fillStyle = 'white'
+    ctx.fillText('>', cWidth/2+settingsOptions[settingsOptionNumber].arrowOffset, cHeight/2+settingsOptions[settingsOptionNumber].height)
+}
+
+function updatePlay(){
+    player.update()
+    cpu.update()
+}
+function drawPlay(){
+    ctx.drawImage(map1.image, 0, 0, cWidth, cHeight)
+    player.draw()
+    cpu.draw()
 }
 
 initialize();
