@@ -11,7 +11,7 @@ const gravity = {x: .3, y: 0.5};
 
 
 class character{
-    constructor(x, y, moveinc = 5, isPlayer = false, direction = 1){
+    constructor(x = 0, y = 0, moveinc = 5, isPlayer = false, direction = 1){
         this.x = x;
         this.y = y;
         this.img = new Image();
@@ -116,8 +116,8 @@ class character{
     
     colliderUpdate(){
         this.spriteCollider = {
-            x: this.x+this.spriteOffsetX, 
-            y: this.y+this.spriteOffsetY,
+            x: this.x+this?.spriteOffsetX, 
+            y: this.y+this?.spriteOffsetY,
             width: this.spriteColliderWidth,
             height: this.spriteColliderHeight,
         }
@@ -136,6 +136,11 @@ class character{
         else {
             return false;
         }
+    }
+
+    updateXYFromCollider(){
+        this.x = this.spriteCollider.x - this?.spriteOffsetX
+        this.y = this.spriteCollider.y - this?.spriteOffsetY
     }
 }
 

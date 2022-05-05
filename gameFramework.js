@@ -30,10 +30,11 @@ export var gameFrame = 0;
 var splashState = !true;
 var arrowkeybinds = true;
 
-
+//Assigning the player and CPU
 export var player = new characters.wizard(-100, 0, 8, true)
 export var cpu = new characters.windElemental(cWidth, 0, 5, false, -1)
 
+// Keycode Stuff
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P
 var arrowKeys = [37, 39, 81, 87] // Left, Right, Q, W
 
@@ -45,6 +46,7 @@ var key_codes = { // Defaults to arrow keys
     jump: 32 // Spacebar
 }
 
+// Menu Option Stuff
 var menuOptionNumber = 0
 var menuOptions = [{ 
     number: 1, // Start
@@ -62,6 +64,7 @@ var menuOptions = [{
     height: +170,
 }]
 
+//Settings Screen Settings
 var settingsOptionNumber = 0
 var settingsOptions = [{ 
     number: 1, // WASD
@@ -82,6 +85,20 @@ var settingsOptions = [{
     height: +170,
 }]
 
+//Character select stuff
+//Variable that checks if the player can select a character
+var canSelect = false;
+//Character they are hovering over
+var currChar = 0;
+//Array with each character
+var charArray  = [
+    new characters.windElemental(),
+    new characters.wizard(),
+    new characters.windElemental(),
+    new characters.wizard(),
+    new characters.windElemental(),
+]
+
 function initialize(){
     
     window.addEventListener('keydown', function(e){ if(!curkeys[e.keyCode]){
@@ -99,6 +116,7 @@ function gameUpdate() {
     if(gameState == 0 && !splashState) updateTitleScreen()
     else if(gameState == 1) updateOptions()
     else if(gameState == 2) updateInstruction()
+    else if(gameState == 3) updateCharacterSelectScreen()
     
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
@@ -118,6 +136,7 @@ function gameDraw(){
     if(gameState == 0 && !splashState) drawTitleScreen()
     if(gameState == 1) drawOptionsScreen()
     if(gameState == 2) drawInstructionScreen()
+    if(gameState == 3) drawCharacterSelectScreen()
 }
 
 export function movementHandler() {
@@ -180,7 +199,7 @@ function updateTitleScreen(){
         if(menuOptionNumber < 0) menuOptionNumber = 2;
     }
     else if(newkeys[13]) {
-        if([menuOptionNumber].number == 1) {gameState = 3}
+        if(menuOptions[menuOptionNumber].number == 1) {gameState = 3}
         if(menuOptions[menuOptionNumber].number == 2) {gameState = 1}
         if(menuOptions[menuOptionNumber].number == 3) {gameState = 2;}
     }
@@ -245,13 +264,13 @@ function updateOptions(){
     }
     else if(newkeys[37]) {
         if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = ! arrowkeybinds;}
-        if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value-1 > 0)settingsOptions[settingsOptionNumber].value--}
-        if(settingsOptions[settingsOptionNumber].number == 3) if(settingsOptions[settingsOptionNumber].value-1 > 0){settingsOptions[settingsOptionNumber].value--}
+        if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value > 0)settingsOptions[settingsOptionNumber].value--}
+        if(settingsOptions[settingsOptionNumber].number == 3) if(settingsOptions[settingsOptionNumber].value > 0){settingsOptions[settingsOptionNumber].value--}
     }
     else if(newkeys[39]) {
         if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = ! arrowkeybinds;}
-        if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value+1 < 10)settingsOptions[settingsOptionNumber].value++}
-        if(settingsOptions[settingsOptionNumber].number == 3) {if(settingsOptions[settingsOptionNumber].value+1 < 10)settingsOptions[settingsOptionNumber].value++}
+        if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value < 10)settingsOptions[settingsOptionNumber].value++}
+        if(settingsOptions[settingsOptionNumber].number == 3) {if(settingsOptions[settingsOptionNumber].value < 10)settingsOptions[settingsOptionNumber].value++}
     }
 }
 
@@ -271,6 +290,24 @@ function drawOptionsScreen(){
     ctx.fillText(`Music Vol:  ${settingsOptions[2].value}`, cWidth/2, cHeight/2+170)
     ctx.font = '20px ArcadeClassic'
     ctx.fillText('Use  arrow  keys  to  move  and  enter  to  select', cWidth/2, cHeight/2+290)
+}
+
+function updateCharacterSelectScreen(){
+    if(newkeys[27]) gameState = 0;
+    for (let i = 0; i < charArray.length; i++) {
+        charArray[i].update();
+        charArray[i].spriteCollider.x = cWidth*i/5+90;
+        charArray[i].spriteCollider.y = cHeight-charArray[i].spriteCollider.height;
+        charArray[i].updateXYFromCollider();
+    }
+}
+
+function drawCharacterSelectScreen(){
+    ctx.fillStyle = 'hsl(182, 100%, 37%)';
+    ctx.fillRect(0, cHeight*13/16, cWidth, cHeight)
+    for (let i = 0; i < charArray.length; i++) {
+        charArray[i].draw()
+    }
 }
 
 initialize();
