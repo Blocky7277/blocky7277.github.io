@@ -172,11 +172,8 @@ export function movementHandler() {
 export function attackHandler(){
     if(newkeys[key_codes.attack_1]) { // Attack 1 Button
         player.attack1()
-        console.log("Attack 1 Button")
-        console.log(key_codes)
     }
     else if(newkeys[key_codes.attack_2]) { // Attack 2 Button
-        console.log("Attack 2 Button")
         player.attack2()
     }
 }
@@ -325,10 +322,10 @@ function updateCharacterSelectScreen(){
         player.updateXYFromCollider();
         player.isPlayer = true;
         var rand  = util.getRandIntBetween(0, charArray.length-1);
-        console.log(rand, cpu)
         cpu = charArray[rand];
-        cpu.x = cWidth;
-        cpu.y = 0
+        cpu.spriteCollider.x = cWidth-cpu.spriteCollider.width;
+        cpu.spriteCollider.y = 0
+        cpu.updateXYFromCollider()
         cpu.direction = -1
         cpu.isPlayer = false;
         gameState = 4;
@@ -350,11 +347,22 @@ function drawCharacterSelectScreen(){
 function updatePlay(){
     player.update()
     cpu.update()
+    if(player.health <= 0) gameState = -1;
+    if(cpu.health <= 0) gameState = 5;  
 }
 function drawPlay(){
-    ctx.drawImage(map1.image, 0, 0, cWidth, cHeight)
+    ctx.drawImage(map2.image, 0, 0, cWidth, cHeight)
     player.draw()
     cpu.draw()
 }
+
+function updateEndScreen(){
+    if(newkeys[13]) gameState = 0;
+}
+function drawLoseScreen(){
+    ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight)
+}
+
+//Swing Life Away
 
 initialize();
