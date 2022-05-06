@@ -16,7 +16,7 @@ const map1 = {
 map1.image.src = map1.source;
 const map2 = { 
     image: new Image(), 
-    source: './backgrounds/beach.png', //img
+    source: './backgrounds/landScape.jpg', //img
     platform1: null, //obj
     platform2: null, //obj
     ground: cHeight-80, //Y- Coord CHeight - somthing
@@ -108,7 +108,9 @@ var charArray  = [
 ]
 
 function initialize(){
-    
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
+
     window.addEventListener('keydown', function(e){ if(!curkeys[e.keyCode]){
         curkeys[e.keyCode] = true; 
         newkeys[e.keyCode] = true;}})
@@ -126,6 +128,7 @@ function gameUpdate() {
     else if(gameState == 2) updateInstruction()
     else if(gameState == 3) updateCharacterSelectScreen()
     else if(gameState == 4) updatePlay()
+    else if(gameState == 5) updateEndScreen()
     
     //Don't modify the code below
     for (let i = 0; i < newkeys.length; i++) {
@@ -358,10 +361,21 @@ function drawPlay(){
 }
 
 function updateEndScreen(){
-    if(newkeys[13]) gameState = 0;
+    if(newkeys[13]) {
+        gameState = 0;
+        player = new characters.wizard(-100, 0, 8, true)
+        cpu = new characters.windElemental(cWidth, 0, 5, false, -1)
+    }
 }
 function drawLoseScreen(){
     ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight)
+    ctx.fillStyle = 'white'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '100px ArcadeClassic'
+    ctx.fillText('YOU  WIN', cWidth/2, cHeight/2-100)
+    ctx.font = '50px ArcadeClassic'
+    ctx.fillText('Press Enter To Restart', cWidth/2, cHeight/2+100)
 }
 
 //Swing Life Away
