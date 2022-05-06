@@ -147,6 +147,7 @@ function gameDraw(){
     if(gameState == 2) drawInstructionScreen()
     if(gameState == 3) drawCharacterSelectScreen()
     if(gameState == 4) drawPlay()
+    if(gameState == 5) drawLoseScreen()
 }
 
 export function movementHandler() {

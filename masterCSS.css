@@ -2,8 +2,8 @@
 @import url('https://fonts.googleapis.com/css?family=Caveat&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Rubik:700&display=swap');
 @font-face {
-    font-family: ArcadeClassic;
-    src:local("./fonts/ARCADECLASSIC.TTF");
+    font-family: "ArcadeClassic";
+    src: url('./fonts/arcade.ttf')
 }
 
 
