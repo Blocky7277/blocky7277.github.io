@@ -564,7 +564,7 @@ export class windElemental extends character{
         //Attack Collider
         ctx.fillStyle = 'red'
         //Attack Collider
-        ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
+        // ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
         ctx.fillStyle = 'black'
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
