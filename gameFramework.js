@@ -8,28 +8,28 @@ const fps = 60;
 
 //Audio
 var bgMusic = new Audio();
-var currSong = 0;
 var songArray = [
     {
         src: './audio/SNA.mp3',
-        vol: .5
+        vol: .3
     },
-
+    
     {
         src: './audio/SSBU.mp3',
-        vol: .6
+        vol: .4
     },
-
+    
     {
         src: './audio/BEP.mp3',
         vol: .15
     },
-
+    
     {
         src: './audio/TSBFT.mp3',
-        vol: .3
+        vol: .25
     }
 ]
+var currSong = util.getRandIntBetween(-1, songArray.length);
 bgMusic.src = songArray[currSong].src
 bgMusic.maxVol = songArray[currSong].vol
 bgMusic.volume = bgMusic.maxVol
@@ -59,6 +59,7 @@ map2.image.src = map2.source;
 //Imported Modules
 import * as characters from "./characters.js";
 import * as util from "./utilityClassesAndFunctions.js"
+import * as cpuLogic from "./cpuLevels.js"
 
 // The keycode events
 // When the key is pressed it will stay true
@@ -66,7 +67,7 @@ var curkeys = [];
 // Only true for one frame
 var newkeys = [];
 
-//Game States 0: title screen, 1: settings, 2: instructions, 3: character select 4: play -1: lose, 5: win, .5: pause,
+//Game States 0: title screen, 1: settings, 2: instructions, 3: character select 3.5: cpu level select 4: play -1: lose, 5: win, .5: pause,
 var gameState = 0;
 var gameEnd = false;
 export var gameFrame = 0;
@@ -185,6 +186,8 @@ function initialize(){
 function gameUpdate() {
     //GAME UPDATE LOGIC
     gameFrame++
+
+    cpuLogic.CpuLevel1()
 
     //Gamestate Manager
     if(gameState == 0 && !splashState) updateTitleScreen()
@@ -398,7 +401,8 @@ function updateCharacterSelectScreen(){
         player.spriteCollider.y = 0;
         player.updateXYFromCollider();
         player.isPlayer = true;
-        var rand  = util.getRandIntBetween(0, charArray.length-1);
+        var rand  = util.getRandIntBetween(-1, charArray.length);
+        console.log(rand);
         cpu = cpuArray[rand];
         cpu.spriteCollider.x = cWidth-cpu.spriteCollider.width;
         cpu.spriteCollider.y = 10
