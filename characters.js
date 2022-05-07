@@ -147,6 +147,7 @@ class character{
 export class wizard extends character {
     constructor(x, y, moveinc, isPlayer, direction){
         super(x, y, moveinc, isPlayer, direction);
+        this.maxHealth = 50;
         this.health = 50;
         this.imgPath = './sprites/mahonohito';
         this.img.src = this.imgPath+'/Idle.png';
@@ -163,11 +164,11 @@ export class wizard extends character {
     
     //Draw Sprite
     draw(){
-        //Attack Collider
         ctx.fillStyle = 'red'
-        //Collider
+        //Attack Collider
         // ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
         ctx.fillStyle = 'black'
+        //Collider
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
         if (this.direction == -1) {
             //This all essentially flips the image
@@ -232,12 +233,12 @@ export class wizard extends character {
         }
         else if(this.currentAttack == 2){
             if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*3.8
-                this.attackCollider.width = this.spriteCollider.width*3.8
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.6
+                this.attackCollider.width = this.spriteCollider.width*2.6
             }
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*3.8;
+                this.attackCollider.width = this.spriteCollider.width*2.6;
             }
             this.attackCollider.y = this.spriteCollider.y;
             this.attackCollider.height = this.spriteCollider.height;
@@ -353,6 +354,7 @@ export class windElemental extends character{
         super(x, y, moveinc, isPlayer, direction);
         this.spriteCollider = {
         }
+        this.maxHealth = 75
         this.health = 75
         this.animationcolumn = 0;
         this.totalFrames = 7;

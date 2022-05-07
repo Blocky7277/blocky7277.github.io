@@ -8,8 +8,30 @@ const fps = 60;
 
 //Audio
 var bgMusic = new Audio();
-bgMusic.src = './audio/SNA.mp3'
-bgMusic.maxVol = .6
+var currSong = 0;
+var songArray = [
+    {
+        src: './audio/SNA.mp3',
+        vol: .5
+    },
+
+    {
+        src: './audio/SSBU.mp3',
+        vol: .6
+    },
+
+    {
+        src: './audio/BEP.mp3',
+        vol: .15
+    },
+
+    {
+        src: './audio/TSBFT.mp3',
+        vol: .3
+    }
+]
+bgMusic.src = songArray[currSong].src
+bgMusic.maxVol = songArray[currSong].vol
 bgMusic.volume = bgMusic.maxVol
 
 //Title Screen Background
@@ -136,6 +158,17 @@ function initialize(){
     
     //Allows the page 200ms to load so it isn't just a white box background
     util.sleep(50).then(() => {alert('Click The Page To Start!')})
+
+    bgMusic.addEventListener("ended", () =>{
+        if(currSong < songArray.length-1 ) currSong++
+        else currSong = 0;
+        bgMusic.src = songArray[currSong].src
+        bgMusic.maxVol = songArray[currSong].vol
+        bgMusic.volume = bgMusic.maxVol*settingsOptions[1].value/10
+        bgMusic.currentTime = 0;
+        bgMusic.play()
+        console.log("Next Song");
+   });
 
     myCanvas.addEventListener('click', function() {
         bgMusic.play()
@@ -395,13 +428,13 @@ function updatePlay(){
     cpu.update()
     cpu.attack1()
     if(player.health <= 0 && !gameEnd){
-        util.sleep(5000).then(() => {
+        util.sleep(3500).then(() => {
             gameState = -1;
         })
         gameEnd = true;
     }
     if(cpu.health <= 0 && !gameEnd) {
-        util.sleep(5000).then(() => {
+        util.sleep(3500).then(() => {
             gameState = 5;
         })
         gameEnd = true;
@@ -411,6 +444,20 @@ function drawPlay(){
     ctx.drawImage(map2.image, 0, 0, cWidth, cHeight)
     player.draw()
     cpu.draw()
+    if(gameState == 4){
+        ctx.fillStyle = 'black';
+        ctx.fillRect(5, 5, cWidth/2-10, 50)
+        ctx.fillRect(cWidth-5, 5, -cWidth/2+10, 50)
+        ctx.fillStyle = 'darkred';
+        var healthBarPlayer = (cWidth/2-14)*(player.health/player.maxHealth)
+        var healthBarCPU = (cWidth/2-14)*(cpu.health/cpu.maxHealth)
+        if(healthBarPlayer > 0) ctx.fillRect(7, 7, healthBarPlayer, 46)
+        if(healthBarCPU > 0) ctx.fillRect(cWidth-7, 7, -healthBarCPU, 46)
+        ctx.fillStyle = 'white';
+        ctx.font = '20px ArcadeClassic'
+        ctx.fillText('Player', 50, 30)
+        ctx.fillText('CPU', cWidth-35, 30)
+    }
 }
 
 function updateEndScreen(){
