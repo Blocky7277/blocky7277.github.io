@@ -5,7 +5,18 @@ export const ctx = c.getContext("2d");
 const cWidth = c.width; 
 const cHeight = c.height;
 const fps = 60;
+
+//Audio
+var bgMusic = new Audio();
+bgMusic.src = './audio/SNA.mp3'
+bgMusic.maxVol = .6
+bgMusic.volume = bgMusic.maxVol
+
+//Title Screen Background
 const titleBackground = new Image();
+titleBackground.src = './backgrounds/flatNightBG.png'
+
+//Maps
 const map1 = {
     image: new Image(), 
     source: './backgrounds/flatNightBG.png', //img
@@ -22,9 +33,8 @@ const map2 = {
     ground: cHeight-80, //Y- Coord CHeight - somthing
 }
 map2.image.src = map2.source;
-titleBackground.src = './backgrounds/flatNightBG.png'
 
-
+//Imported Modules
 import * as characters from "./characters.js";
 import * as util from "./utilityClassesAndFunctions.js"
 
@@ -36,6 +46,7 @@ var newkeys = [];
 
 //Game States 0: title screen, 1: settings, 2: instructions, 3: character select 4: play -1: lose, 5: win, .5: pause,
 var gameState = 0;
+var gameEnd = false;
 export var gameFrame = 0;
 var splashState = false;
 var arrowkeybinds = true;
@@ -96,9 +107,11 @@ var settingsOptions = [{
 }]
 
 //Character select stuff
+
 //Character they are hovering over
 var currChar = 0;
-//Array with each character
+
+//Array with each character for player
 var charArray  = [
     new characters.windElemental(),
     new characters.wizard(),
@@ -107,10 +120,26 @@ var charArray  = [
     new characters.windElemental(),
 ]
 
+//Array with each character for CPU
+var cpuArray  = [
+    new characters.windElemental(),
+    new characters.wizard(),
+    new characters.windElemental(),
+    new characters.wizard(),
+    new characters.windElemental(),
+]
+
 function initialize(){
+    //Disable image smoothing for crisper image scaling
     ctx.webkitImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
+    
+    //Allows the page 200ms to load so it isn't just a white box background
+    util.sleep(50).then(() => {alert('Click The Page To Start!')})
 
+    myCanvas.addEventListener('click', function() {
+        bgMusic.play()
+    })
     window.addEventListener('keydown', function(e){ if(!curkeys[e.keyCode]){
         curkeys[e.keyCode] = true; 
         newkeys[e.keyCode] = true;}})
@@ -118,22 +147,26 @@ function initialize(){
         
         window.requestAnimationFrame(gameUpdate);
     }
+
     
 function gameUpdate() {
     //GAME UPDATE LOGIC
     gameFrame++
 
+    //Gamestate Manager
     if(gameState == 0 && !splashState) updateTitleScreen()
     else if(gameState == 1) updateOptions()
     else if(gameState == 2) updateInstruction()
     else if(gameState == 3) updateCharacterSelectScreen()
     else if(gameState == 4) updatePlay()
-    else if(gameState == 5) updateEndScreen()
+    else if(gameState == 5 || gameState == -1) updateEndScreen()
     
-    //Don't modify the code below
+    //Reset New Keys
     for (let i = 0; i < newkeys.length; i++) {
         newkeys[i] = false
     }
+
+    //Draw The Frame
     gameDraw();
     
     //FPS throttling for consistant gameplay across devices
@@ -150,7 +183,8 @@ function gameDraw(){
     if(gameState == 2) drawInstructionScreen()
     if(gameState == 3) drawCharacterSelectScreen()
     if(gameState == 4) drawPlay()
-    if(gameState == 5) drawLoseScreen()
+    if(gameState == 5) drawWinScreen()
+    if(gameState == -1) drawLoseScreen()
 }
 
 export function movementHandler() {
@@ -239,7 +273,7 @@ function drawTitleScreen(){
 function updateInstruction(){
     player.updateTitle()
     cpu.updateTitle()
-    if(newkeys[27]) gameState = 0;
+    if(newkeys[13]) gameState = 0;
 }
 
 function drawInstructionScreen(){
@@ -261,13 +295,13 @@ function drawInstructionScreen(){
     ctx.fillText('(Note:  If  you  change  your  movement  binds  the  menu  will  still  only  navigate  with  arrow  keys)', cWidth/2, cHeight/2+75)
     ctx.fillText('Good  Luck  Have  Fun', cWidth/2, cHeight/2+125)
     ctx.font = '20px ArcadeClassic'
-    ctx.fillText('Press  ESC  to  go  back', cWidth/2, cHeight/2+290)
+    ctx.fillText('Press  Enter  to  go  back', cWidth/2, cHeight/2+290)
 }
 
 function updateOptions(){
     player.updateTitle()
     cpu.updateTitle()
-    if(newkeys[27]) gameState = 0;
+    if(newkeys[13]) gameState = 0;
     else if(newkeys[40]) {
         settingsOptionNumber++
         if(settingsOptionNumber > 2) settingsOptionNumber = 0;
@@ -277,15 +311,17 @@ function updateOptions(){
         if(settingsOptionNumber < 0) settingsOptionNumber = 2;
     }
     else if(newkeys[37]) {
-        if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = ! arrowkeybinds;}
+        if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = !arrowkeybinds;}
         if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value > 0)settingsOptions[settingsOptionNumber].value--}
         if(settingsOptions[settingsOptionNumber].number == 3) if(settingsOptions[settingsOptionNumber].value > 0){settingsOptions[settingsOptionNumber].value--}
     }
     else if(newkeys[39]) {
-        if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = ! arrowkeybinds;}
+        if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = !arrowkeybinds;}
         if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value < 10)settingsOptions[settingsOptionNumber].value++}
         if(settingsOptions[settingsOptionNumber].number == 3) {if(settingsOptions[settingsOptionNumber].value < 10)settingsOptions[settingsOptionNumber].value++}
     }
+    // sfx.volume = sfx.maxVol*settingsOptions[1].value/10
+    bgMusic.volume = bgMusic.maxVol*settingsOptions[2].value/10
 }
 
 function drawOptionsScreen(){
@@ -305,15 +341,19 @@ function drawOptionsScreen(){
     ctx.fillText(`SFX  Vol:  ${settingsOptions[1].value}`, cWidth/2, cHeight/2+50)
     ctx.fillText(`Music Vol:  ${settingsOptions[2].value}`, cWidth/2, cHeight/2+170)
     ctx.font = '20px ArcadeClassic'
-    ctx.fillText('Use  arrow  keys  to  move  and  enter  to  select', cWidth/2, cHeight/2+290)
+    ctx.fillText('Use  arrow  keys  to  change  settings  and  navigate  and  enter  to  go  back.', cWidth/2, cHeight/2+290)
 }
 
 function updateCharacterSelectScreen(){
     for (let i = 0; i < charArray.length; i++) {
         charArray[i].update();
         charArray[i].spriteCollider.x = cWidth*i/5+90;
-        charArray[i].spriteCollider.y = cHeight-charArray[i].spriteCollider.height;
+        charArray[i].spriteCollider.y = cHeight-charArray[i].spriteCollider.height*1.4;
         charArray[i].updateXYFromCollider();
+        cpuArray[i].update();
+        cpuArray[i].spriteCollider.x = cWidth*i/5+90;
+        cpuArray[i].spriteCollider.y = cHeight-charArray[i].spriteCollider.height;
+        cpuArray[i].updateXYFromCollider();
     }
     
     if(newkeys[27]) gameState = 0;
@@ -326,9 +366,9 @@ function updateCharacterSelectScreen(){
         player.updateXYFromCollider();
         player.isPlayer = true;
         var rand  = util.getRandIntBetween(0, charArray.length-1);
-        cpu = charArray[rand];
+        cpu = cpuArray[rand];
         cpu.spriteCollider.x = cWidth-cpu.spriteCollider.width;
-        cpu.spriteCollider.y = 0
+        cpu.spriteCollider.y = 10
         cpu.updateXYFromCollider()
         cpu.direction = -1
         cpu.isPlayer = false;
@@ -339,20 +379,33 @@ function updateCharacterSelectScreen(){
 function drawCharacterSelectScreen(){
     ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight)
     ctx.fillStyle = '#322758';
-    ctx.fillRect(0, cHeight*55/64, cWidth, cHeight)
+    ctx.fillRect(0, cHeight*54/64, cWidth, cHeight)
     for (let i = 0; i < charArray.length; i++) {
         charArray[i].draw()
     }
     ctx.font = '50px ArcadeClassic'
     ctx.fillStyle = 'white'
-    ctx.fillText('v', charArray[currChar].spriteCollider.x+charArray[currChar].spriteCollider.width/2, cHeight*53/64)
+    ctx.fillText('v', charArray[currChar].spriteCollider.x+charArray[currChar].spriteCollider.width/2, cHeight*52/64)
+    ctx.font = '20px ArcadeClassic'
+    ctx.fillText('.................................................................Press  Enter  to  choose  a  character  (Press  ESC  to  go  back).................................................................', cWidth/2, cHeight/2+290)
 }
 
 function updatePlay(){
     player.update()
     cpu.update()
-    if(player.health <= 0) gameState = -1;
-    if(cpu.health <= 0) gameState = 5;  
+    cpu.attack1()
+    if(player.health <= 0 && !gameEnd){
+        util.sleep(5000).then(() => {
+            gameState = -1;
+        })
+        gameEnd = true;
+    }
+    if(cpu.health <= 0 && !gameEnd) {
+        util.sleep(5000).then(() => {
+            gameState = 5;
+        })
+        gameEnd = true;
+    }
 }
 function drawPlay(){
     ctx.drawImage(map2.image, 0, 0, cWidth, cHeight)
@@ -362,21 +415,49 @@ function drawPlay(){
 
 function updateEndScreen(){
     if(newkeys[13]) {
-        gameState = 0;
         player = new characters.wizard(-100, 0, 8, true)
         cpu = new characters.windElemental(cWidth, 0, 5, false, -1)
+        charArray  = [
+            new characters.windElemental(),
+            new characters.wizard(),
+            new characters.windElemental(),
+            new characters.wizard(),
+            new characters.windElemental(),
+        ]
+        cpuArray  = [
+            new characters.windElemental(),
+            new characters.wizard(),
+            new characters.windElemental(),
+            new characters.wizard(),
+            new characters.windElemental(),
+        ]
+        gameState = 0;
+        gameEnd = false;
     }
 }
-function drawLoseScreen(){
-    ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight)
-    ctx.fillStyle = 'white'
+
+function drawWinScreen(){
+    drawPlay()
+    ctx.fillStyle = 'darkblue'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = '100px ArcadeClassic'
     ctx.fillText('YOU  WIN', cWidth/2, cHeight/2-100)
     ctx.font = '50px ArcadeClassic'
-    ctx.fillText('Press Enter To Restart', cWidth/2, cHeight/2+100)
+    ctx.fillText('Press  Enter  To  Restart', cWidth/2, cHeight/2+100)
 }
+
+function drawLoseScreen(){
+    drawPlay()
+    ctx.fillStyle = 'darkred'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '100px ArcadeClassic'
+    ctx.fillText('YOU  LOSE', cWidth/2, cHeight/2-100)
+    ctx.font = '50px ArcadeClassic'
+    ctx.fillText('Press  Enter  To  Restart', cWidth/2, cHeight/2+100)
+}
+
 
 //Swing Life Away
 

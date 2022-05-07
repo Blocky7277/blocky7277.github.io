@@ -220,24 +220,24 @@ export class wizard extends character {
     attackLogicPlayer(){
         if(this.currentAttack == 1){
             if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
-                this.attackCollider.width = this.spriteCollider.width*2.8
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.4
+                this.attackCollider.width = this.spriteCollider.width*3.4
             }
             else if(this.direction == 1) {
-                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*2.4;
+                this.attackCollider.x = this.spriteCollider.x;
+                this.attackCollider.width = this.spriteCollider.width*3.4;
             }
             this.attackCollider.y = this.spriteCollider.y-40;
-            this.attackCollider.height = this.spriteCollider.height+20;  
+            this.attackCollider.height = this.spriteCollider.height+40;  
         }
         else if(this.currentAttack == 2){
             if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
-                this.attackCollider.width = this.spriteCollider.width*2.8
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*3.8
+                this.attackCollider.width = this.spriteCollider.width*3.8
             }
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*2.8;
+                this.attackCollider.width = this.spriteCollider.width*3.8;
             }
             this.attackCollider.y = this.spriteCollider.y;
             this.attackCollider.height = this.spriteCollider.height;
@@ -251,24 +251,24 @@ export class wizard extends character {
     attackLogicCPU(){
         if(this.currentAttack == 1){
             if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
-                this.attackCollider.width = this.spriteCollider.width*1.2
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.4
+                this.attackCollider.width = this.spriteCollider.width*3.4
             }
             else if(this.direction == 1) {
-                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*1.2;
+                this.attackCollider.x = this.spriteCollider.x;
+                this.attackCollider.width = this.spriteCollider.width*3.4;
             }
-            this.attackCollider.y = this.spriteCollider.y;
-            this.attackCollider.height = this.spriteCollider.height;  
+            this.attackCollider.y = this.spriteCollider.y-40;
+            this.attackCollider.height = this.spriteCollider.height+40;  
         }
         else if(this.currentAttack == 2){
             if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*2.8
-                this.attackCollider.width = this.spriteCollider.width*2.8
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*3.8
+                this.attackCollider.width = this.spriteCollider.width*3.8
             }
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*2.8;
+                this.attackCollider.width = this.spriteCollider.width*3.8;
             }
             this.attackCollider.y = this.spriteCollider.y;
             this.attackCollider.height = this.spriteCollider.height;
@@ -403,8 +403,8 @@ export class windElemental extends character{
     attackLogicPlayer(){
         if(this.currentAttack == 1){
             if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = -this.spriteCollider.width*2.8
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.8;
+                this.attackCollider.width = this.spriteCollider.width*2.8
             }
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x;
@@ -446,12 +446,12 @@ export class windElemental extends character{
     attackLogicCPU(){
         if(this.currentAttack == 1){
             if(this.direction == -1) {
-                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2
-                this.attackCollider.width = this.spriteCollider.width*1.2
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.8;
+                this.attackCollider.width = this.spriteCollider.width*2.8
             }
             else if(this.direction == 1) {
-                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width;
-                this.attackCollider.width = this.spriteCollider.width*1.2;
+                this.attackCollider.x = this.spriteCollider.x;
+                this.attackCollider.width = this.spriteCollider.width*2.8;
             }
             this.attackCollider.y = this.spriteCollider.y;
             this.attackCollider.height = this.spriteCollider.height;  
