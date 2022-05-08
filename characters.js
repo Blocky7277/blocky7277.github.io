@@ -606,6 +606,7 @@ export class metalBender extends character{
         }
         this.maxHealth = 90
         this.health = this.maxHealth;
+        this.canAttack1 = true;
         this.canAttack2 = true;
         this.animationcolumn = 0;
         this.totalFrames = 7;
@@ -621,8 +622,9 @@ export class metalBender extends character{
     }
     
     attack1(){
-        if(this.attacking) return;
+        if(this.attacking || !this.canAttack1) return;
         // Damage of 15
+        this.canAttack1 = false;
         this.currentAttack = 1;
         this.currentAttackDmg = 10;
         this.damageFrame = 4;
@@ -747,7 +749,12 @@ export class metalBender extends character{
                 else this.attackLogicCPU()
             }
             if(this.charFrame == this.totalFrames) {
-                if(this.currentAttack == 2) {
+                if(this.currentAttack == 1) {
+                    util.sleep(400).then(() => {
+                        this.canAttack1 = true;
+                    })
+                }
+                else if(this.currentAttack == 2) {
                     util.sleep(1700).then(() => {
                         this.canAttack2 = true;
                     })
