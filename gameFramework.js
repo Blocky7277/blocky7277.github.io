@@ -138,7 +138,7 @@ var currChar = 0;
 var charArray  = [
     new characters.windElemental(),
     new characters.wizard(),
-    new characters.windElemental(),
+    new characters.metalBender(),
     new characters.wizard(),
     new characters.windElemental(),
 ]
@@ -147,7 +147,7 @@ var charArray  = [
 var cpuArray  = [
     new characters.windElemental(),
     new characters.wizard(),
-    new characters.windElemental(),
+    new characters.metalBender(),
     new characters.wizard(),
     new characters.windElemental(),
 ]
@@ -159,10 +159,12 @@ function initialize(){
     
     //Allows the page 200ms to load so it isn't just a white box background
     util.sleep(50).then(() => {alert('Click The Page To Start!')})
-
+    //Check if the music ended
     bgMusic.addEventListener("ended", () =>{
+        //Switch to next song
         if(currSong < songArray.length-1 ) currSong++
         else currSong = 0;
+        //Changes the src volume and resets the place in the song then plays it
         bgMusic.src = songArray[currSong].src
         bgMusic.maxVol = songArray[currSong].vol
         bgMusic.volume = bgMusic.maxVol*settingsOptions[1].value/10
@@ -171,6 +173,7 @@ function initialize(){
         console.log("Next Song");
    });
 
+   //Since the music only works if the user interacts with the browser I just prompt them to click
     myCanvas.addEventListener('click', function() {
         bgMusic.play()
     })
@@ -191,6 +194,7 @@ function gameUpdate() {
 
     //Gamestate Manager
     if(gameState == 0 && !splashState) updateTitleScreen()
+    if(gameState == 0.5) updatePauseScreen()
     else if(gameState == 1) updateOptions()
     else if(gameState == 2) updateInstruction()
     else if(gameState == 3) updateCharacterSelectScreen()
@@ -215,9 +219,11 @@ function gameDraw(){
     ctx.clearRect(0, 0, cWidth, cHeight);
     //DRAW STATEMENTS
     if(gameState == 0 && !splashState) drawTitleScreen()
+    if(gameState == 0.5) drawPauseScreen()
     if(gameState == 1) drawOptionsScreen()
     if(gameState == 2) drawInstructionScreen()
     if(gameState == 3) drawCharacterSelectScreen()
+    if(gameState == 3.5) drawCharacterSelectScreen()
     if(gameState == 4) drawPlay()
     if(gameState == 5) drawWinScreen()
     if(gameState == -1) drawLoseScreen()
@@ -283,9 +289,11 @@ function updateTitleScreen(){
         if(menuOptionNumber < 0) menuOptionNumber = 2;
     }
     else if(newkeys[13]) {
-        if(menuOptions[menuOptionNumber].number == 1) {gameState = 3}
-        if(menuOptions[menuOptionNumber].number == 2) {gameState = 1}
-        if(menuOptions[menuOptionNumber].number == 3) {gameState = 2;}
+        util.sleep(20).then(() =>{
+            if(menuOptions[menuOptionNumber].number == 1) {gameState = 3}
+            else if(menuOptions[menuOptionNumber].number == 2) {gameState = 1}
+            else if(menuOptions[menuOptionNumber].number == 3) {gameState = 2;}
+        })
     }
 }
 function drawTitleScreen(){
@@ -327,9 +335,10 @@ function drawInstructionScreen(){
     ctx.font = '25px ArcadeClassic'
     ctx.fillText('Use  arrow  keys  or  WASD  to  move  (depending  on  your  settings).', cWidth/2, cHeight/2-75)
     ctx.fillText('To  attack  press  Q  and  W  for  Arrow  Keys  and  O  and  P  for  WASD  and  press  Space  to  jump.', cWidth/2, cHeight/2-25)
-    ctx.fillText('Attack  the  opponent  to  lower  their  HP.  When  their  HP  is 0  you win,  if  your  HP  reaches  0  you  lose', cWidth/2, cHeight/2+25)
+    ctx.fillText('Attack  the  opponent  to  lower  their  HP.  When  their  HP  is 0  you win,  if  your  HP  reaches  0  you  lose.', cWidth/2, cHeight/2+25)
     ctx.fillText('(Note:  If  you  change  your  movement  binds  the  menu  will  still  only  navigate  with  arrow  keys)', cWidth/2, cHeight/2+75)
-    ctx.fillText('Good  Luck  Have  Fun', cWidth/2, cHeight/2+125)
+    ctx.fillText('Press  ESC  during  the  game  to  pause.', cWidth/2, cHeight/2+125)
+    ctx.fillText('Good  Luck  Have  FunQ', cWidth/2, cHeight/2+175)
     ctx.font = '20px ArcadeClassic'
     ctx.fillText('Press  Enter  to  go  back', cWidth/2, cHeight/2+290)
 }
@@ -428,6 +437,7 @@ function drawCharacterSelectScreen(){
 }
 
 function updatePlay(){
+    if(newkeys[27]) gameState = .5;
     player.update()
     cpu.update()
     cpu.attack1()
@@ -471,14 +481,14 @@ function updateEndScreen(){
         charArray  = [
             new characters.windElemental(),
             new characters.wizard(),
-            new characters.windElemental(),
+            new characters.metalBender(),
             new characters.wizard(),
             new characters.windElemental(),
         ]
         cpuArray  = [
             new characters.windElemental(),
             new characters.wizard(),
-            new characters.windElemental(),
+            new characters.metalBender(),
             new characters.wizard(),
             new characters.windElemental(),
         ]
@@ -507,6 +517,26 @@ function drawLoseScreen(){
     ctx.fillText('YOU  LOSE', cWidth/2, cHeight/2-100)
     ctx.font = '50px ArcadeClassic'
     ctx.fillText('Press  Enter  To  Restart', cWidth/2, cHeight/2+100)
+}
+
+function drawPauseScreen(){
+    drawPlay();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fillRect(0, 0, cWidth, cHeight)
+    ctx.fillStyle = 'white'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = '50px ArcadeClassic'
+    ctx.fillText('Press  Enter  To  Resume!', cWidth/2, cHeight/2-100)
+    ctx.fillText('Press  X  To  Quit!', cWidth/2, cHeight/2+100)
+}
+
+function updatePauseScreen(){
+    if(newkeys[13]) gameState = 4;
+    else if (newkeys[88]) {
+        newkeys[13] = true;
+        updateEndScreen()
+    }
 }
 
 
