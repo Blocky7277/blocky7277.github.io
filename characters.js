@@ -1008,7 +1008,7 @@ export class king extends character {
                 if(this.currentAttack == 2){
                     //Attack cooldowns
                     util.sleep(400).then(() =>{
-                        this.canAttack1 = true;
+                        this.canAttack2 = true;
                     })
                 }
                 this.attacking = false;
