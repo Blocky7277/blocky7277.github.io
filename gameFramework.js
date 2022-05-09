@@ -280,6 +280,7 @@ function updateTitleScreen(){
     cpu.updateTitle()
     player.attack1()
     cpu.attack2()
+    //Handles choosing an option on title screen
     if(newkeys[40]) {
         menuOptionNumber++
         if(menuOptionNumber > 2) menuOptionNumber = 0;
@@ -317,6 +318,7 @@ function drawTitleScreen(){
 function updateInstruction(){
     player.updateTitle()
     cpu.updateTitle()
+    //Return to home screen
     if(newkeys[13]) gameState = 0;
 }
 
@@ -346,7 +348,9 @@ function drawInstructionScreen(){
 function updateOptions(){
     player.updateTitle()
     cpu.updateTitle()
+    //Return to home screen
     if(newkeys[13]) gameState = 0;
+    //Choose a setting and change it if it can be changed
     else if(newkeys[40]) {
         settingsOptionNumber++
         if(settingsOptionNumber > 2) settingsOptionNumber = 0;
@@ -390,6 +394,7 @@ function drawOptionsScreen(){
 }
 
 function updateCharacterSelectScreen(){
+    //Updates the position and animations of characters
     for (let i = 0; i < charArray.length; i++) {
         charArray[i].update();
         charArray[i].spriteCollider.x = cWidth*i/5+90;
@@ -400,8 +405,9 @@ function updateCharacterSelectScreen(){
         cpuArray[i].spriteCollider.y = cHeight-charArray[i].spriteCollider.height;
         cpuArray[i].updateXYFromCollider();
     }
-    
+    //Return to title
     if(newkeys[27]) gameState = 0;
+    //Choose character
     else if(newkeys[37] && currChar > 0) currChar--;
     else if(newkeys[39] && currChar < charArray.length-1) currChar++;
     else if(newkeys[13]) {
@@ -437,10 +443,12 @@ function drawCharacterSelectScreen(){
 }
 
 function updatePlay(){
+    //Pause
     if(newkeys[27]) gameState = .5;
     player.update()
     cpu.update()
     cpu.attack1()
+    //Checks for victor then waits for KO animation and then ends
     if(player.health <= 0 && !gameEnd){
         util.sleep(3500).then(() => {
             gameState = -1;
@@ -455,9 +463,12 @@ function updatePlay(){
     }
 }
 function drawPlay(){
+    //Draws map
     ctx.drawImage(map2.image, 0, 0, cWidth, cHeight)
+    //Draw player and cpu
     player.draw()
     cpu.draw()
+    //Checks gameState then draws health bars
     if(gameState == 4){
         ctx.fillStyle = 'black';
         ctx.fillRect(5, 5, cWidth/2-10, 50)
@@ -475,6 +486,7 @@ function drawPlay(){
 }
 
 function updateEndScreen(){
+    //Reset the game
     if(newkeys[13]) {
         player = new characters.wizard(-100, 0, 8, true)
         cpu = new characters.windElemental(cWidth, 0, 5, false, -1)
@@ -532,14 +544,13 @@ function drawPauseScreen(){
 }
 
 function updatePauseScreen(){
+    //Back to game
     if(newkeys[13]) gameState = 4;
-    else if (newkeys[88]) {
+    //Quit
+    else if (newkeys[88]) { // X
         newkeys[13] = true;
         updateEndScreen()
     }
 }
-
-
-//Swing Life Away
 
 initialize();

@@ -9,7 +9,7 @@ const cHeight = c.height;
 const ground = cHeight-80;
 const gravity = {x: .3, y: 0.5};
 
-
+//Template for characters
 class character{
     constructor(x = 0, y = 0, moveinc = 5, isPlayer = false, direction = 1){
         this.x = x;
@@ -111,7 +111,6 @@ class character{
         this.physUpdate()
         //Updates Animations
         this.animationUpdate()
-        
     }
     
     colliderUpdate(){
@@ -130,6 +129,7 @@ class character{
     }
     
     attackIntersects(obj){
+        //Checks if the attack collides with the sprite's hitbox
         if (this.attackCollider.x < obj.spriteCollider.x + obj.spriteCollider.width && this.attackCollider.x + this.attackCollider.width > obj.spriteCollider.x && this.attackCollider.y < obj.spriteCollider.y + obj.spriteCollider.height && this.attackCollider.y + this.attackCollider.height > obj.spriteCollider.y) {
             return true;
         }
@@ -139,6 +139,7 @@ class character{
     }
 
     updateXYFromCollider(){
+        //Updates the sprites xy from collider positioning
         this.x = this.spriteCollider.x - this?.spriteOffsetX
         this.y = this.spriteCollider.y - this?.spriteOffsetY
     }
@@ -317,6 +318,7 @@ export class wizard extends character {
             }
             if(this.charFrame == this.totalFrames) {
                 if(this.currentAttack == 1){
+                    //Attack cooldowns
                     util.sleep(500).then(() =>{
                         this.canAttack1 = true;
                     })
