@@ -139,7 +139,7 @@ var charArray  = [
     new characters.windElemental(),
     new characters.wizard(),
     new characters.metalBender(),
-    new characters.wizard(),
+    new characters.king(),
     new characters.windElemental(),
 ]
 
@@ -148,7 +148,7 @@ var cpuArray  = [
     new characters.windElemental(),
     new characters.wizard(),
     new characters.metalBender(),
-    new characters.wizard(),
+    new characters.king(),
     new characters.windElemental(),
 ]
 
@@ -494,14 +494,14 @@ function updateEndScreen(){
             new characters.windElemental(),
             new characters.wizard(),
             new characters.metalBender(),
-            new characters.wizard(),
+            new characters.king(),
             new characters.windElemental(),
         ]
         cpuArray  = [
             new characters.windElemental(),
             new characters.wizard(),
             new characters.metalBender(),
-            new characters.wizard(),
+            new characters.king(),
             new characters.windElemental(),
         ]
         gameState = 0;
