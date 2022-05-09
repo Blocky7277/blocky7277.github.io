@@ -157,7 +157,7 @@ function initialize(){
     ctx.webkitImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
     
-    //Allows the page 200ms to load so it isn't just a white box background
+    //Allows the page 50ms to load so it isn't just a white box background
     util.sleep(50).then(() => {alert('Click The Page To Start!')})
     //Check if the music ended
     bgMusic.addEventListener("ended", () =>{
