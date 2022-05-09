@@ -827,8 +827,9 @@ export class metalBender extends character{
 
 export class king extends character {
     constructor(x, y, moveinc, isPlayer, direction){
-        super(x, y, moveinc, isPlayer, direction);
+        super(x, y, isPlayer, direction);
         this.maxHealth = 50;
+        this.moveinc = 11;
         this.health = this.maxHealth;
         this.canAttack1 = true;
         this.canAttack2 = true;
