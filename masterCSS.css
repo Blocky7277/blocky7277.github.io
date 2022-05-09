@@ -30,3 +30,8 @@ canvas{
     border: .25em solid #8b8b8b;
     scale: 1.25;
 }
+
+#myCanvas{
+    width: 63%;
+    height: 66%;
+}
