@@ -31,10 +31,10 @@ canvas{
     scale: 1.25;
 }
 
-#myCanvas{
-    /*Try to get it to be more relative to play on iPad (probably will do after final project is due)*/
+/* #myCanvas{
+    Try to get it to be more relative to play on iPad (probably will do after final project is due)
     width: 1200px;
     height: 600px;
-}
+}*/
 
 /*Original Dimensions: 1200x600*/
