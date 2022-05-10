@@ -11,9 +11,10 @@ const gravity = {x: .3, y: 0.5};
 
 //Template for characters
 class character{
-    constructor(x = 0, y = 0, moveinc = 5, isPlayer = false, direction = 1){
+    constructor(x = 0, y = 0, isPlayer = false, direction = 1){
         this.x = x;
         this.y = y;
+        this.moveinc = 5;
         this.img = new Image();
         this.spriteCollider = {
         }
@@ -146,8 +147,8 @@ class character{
 }
 
 export class wizard extends character {
-    constructor(x, y, moveinc, isPlayer, direction){
-        super(x, y, moveinc, isPlayer, direction);
+    constructor(x, y, isPlayer, direction){
+        super(x, y, isPlayer, direction);
         this.maxHealth = 50;
         this.health = this.maxHealth;
         this.canAttack1 = true;
@@ -358,8 +359,8 @@ export class wizard extends character {
 }
 
 export class windElemental extends character{
-    constructor(x, y, moveinc, isPlayer, direction){
-        super(x, y, moveinc, isPlayer, direction);
+    constructor(x, y, isPlayer, direction){
+        super(x, y, isPlayer, direction);
         this.spriteCollider = {
         }
         this.maxHealth = 75
@@ -602,8 +603,8 @@ export class windElemental extends character{
 }
 
 export class metalBender extends character{
-    constructor(x, y, moveinc, isPlayer, direction){
-        super(x, y, moveinc, isPlayer, direction);
+    constructor(x, y, isPlayer, direction){
+        super(x, y, isPlayer, direction);
         this.spriteCollider = {
         }
         this.maxHealth = 90
@@ -826,10 +827,10 @@ export class metalBender extends character{
 }
 
 export class king extends character {
-    constructor(x, y, moveinc, isPlayer, direction){
+    constructor(x, y, isPlayer, direction){
         super(x, y, isPlayer, direction);
         this.maxHealth = 50;
-        this.moveinc = 11;
+        this.moveinc = 9;
         this.health = this.maxHealth;
         this.canAttack1 = true;
         this.canAttack2 = true;
