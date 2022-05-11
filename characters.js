@@ -1,4 +1,4 @@
-import {attackHandler, ctx, gameFrame, movementHandler, player, cpu} from "./gameFramework.js";
+import { attackHandler, ctx, gameFrame, movementHandler, player, cpu } from "./gameFramework.js";
 import * as util from "./utilityClassesAndFunctions.js";
 
 const staggerFrame = 5;
@@ -32,7 +32,6 @@ class character{
         this.attacked = false;
         this.direction = direction; // 1 right, -1 left
         this.koed = false;
-        this.moveinc = moveinc;
         this.isPlayer = isPlayer;
         this.vel = {
             x: 0,
@@ -1044,5 +1043,218 @@ export class king extends character {
         }
         
         
+    }
+}
+
+export class monk extends character{
+    constructor(x, y, isPlayer, direction){
+        super(x, y, isPlayer, direction);
+        this.spriteCollider = {
+        }
+        this.maxHealth = 90
+        this.health = this.maxHealth;
+        this.canAttack1 = true;
+        this.canAttack2 = true;
+        this.animationcolumn = 0;
+        this.totalFrames = 7;
+        this.spriteWidth = 288;
+        this.spriteHeight = 128;
+        this.spriteOffsetX = 163;
+        this.spriteOffsetY = 107;
+        this.drawOffsetX = 0;
+        this.drawOffsetY = 0;
+        this.spriteColliderWidth = 35;
+        this.spriteColliderHeight = 43;
+        this.img.src = './sprites/monk/ground_monk_FREE_v1.3-SpriteSheet_288x128.png'
+    }
+    
+    attack1(){
+        if(this.attacking || !this.canAttack1) return;
+        // Damage of 15
+        this.canAttack1 = false;
+        this.currentAttack = 1;
+        this.currentAttackDmg = 10;
+        this.damageFrame = 4;
+        this.animationcolumn = 5;
+        this.totalFrames = 6;
+        this.charFrame = 0;
+        this.attacking = true;
+    }
+    attack2(){
+        // Damage of 17
+        if(this.attacking || this.inAir || !this.canAttack2) return;
+        this.canAttack2 = false;
+        this.currentAttack = 2;
+        this.currentAttackDmg = 17;
+        this.damageFrame = 5;
+        this.animationcolumn = 9;
+        this.charFrame = 0;
+        this.totalFrames = 13;
+        this.attacking = true;
+    }
+
+    attackLogicPlayer(){
+        if(this.currentAttack == 1){
+            this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2;
+            this.attackCollider.width = this.spriteCollider.width*3.45
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;  
+        }
+        else if(this.currentAttack == 2){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.8
+                this.attackCollider.width = this.spriteCollider.width*1.8
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width
+                this.attackCollider.width = this.spriteCollider.width*1.8
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        if(this.attackIntersects(cpu) && !cpu.koed) {
+            cpu.charFrame = 0;
+            cpu.health -= this.currentAttackDmg;
+            cpu.attacked = true;
+        }
+    }
+    attackLogicCPU(){
+        if(this.currentAttack == 1){
+            this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.2;
+            this.attackCollider.width = this.spriteCollider.width*3.45
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;  
+        }
+        else if(this.currentAttack == 2){
+            if(this.direction == -1) {
+                this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.8
+                this.attackCollider.width = this.spriteCollider.width*1.8
+            }
+            else if(this.direction == 1) {
+                this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width
+                this.attackCollider.width = this.spriteCollider.width*1.8
+            }
+            this.attackCollider.y = this.spriteCollider.y;
+            this.attackCollider.height = this.spriteCollider.height;
+        }
+        if(this.attackIntersects(player) && !player.koed) {
+            player.charFrame = 0;
+            player.health -= this.currentAttackDmg;
+            player.attacked = true;
+        }
+    }
+    
+    jump(){
+        if(this.inAir) return;
+        this.vel.y = -12;
+        this.inAir = true
+    }
+
+    animationUpdate(){
+        //Staggers the frames so the animations don't play too fast
+        if(gameFrame % staggerFrame != 0) return;
+        //Animates next frame if there is another frame otherwise start over from first frame
+        if(this.charFrame < this.totalFrames) this.charFrame++;
+        else{
+            //Checks if the character lost because then there is no need to update animations
+            if(this.koed) return;
+            this.charFrame = 0
+        }
+        //Eveything below handles a majority of the animation logic
+
+        //Checks if the conditions are met runs the animation then returns otherwise 
+        if(this.health <= 0){
+            if(!this.koed) this.charFrame = 0;
+            this.animationcolumn = 14;
+            this.totalFrames = 16;
+            this.koed = true;
+            return
+        }
+        //Attacked Animations
+        else if(this.attacked){
+            this.totalFrames = 4;
+            this.animationcolumn = 13;
+            if(this.charFrame == this.totalFrames) this.attacked = false;
+            return
+        }
+        
+        if(this.attacking) {
+            if(this.charFrame == this.damageFrame){
+                if(this.isPlayer) this.attackLogicPlayer()
+                else this.attackLogicCPU()
+            }
+            if(this.charFrame == this.totalFrames) {
+                if(this.currentAttack == 1) {
+                    util.sleep(400).then(() => {
+                        this.canAttack1 = true;
+                    })
+                }
+                else if(this.currentAttack == 2) {
+                    util.sleep(1700).then(() => {
+                        this.canAttack2 = true;
+                    })
+                }
+                    this.attacking = false;
+                    this.currentAttack = 0;
+            }
+            return;
+        }
+        
+        else if(this.inAir){
+            this.totalFrames = 2;
+            if(this.charFrame >= this.totalFrames) this.charFrame = 0;
+            if(this.vel.y > 0) {
+                this.animationcolumn = 3;
+            }
+            else if(this.vel.y < 0) {
+                this.animationcolumn = 4;
+            }
+            return;
+        }
+        
+        else if(this.vel.x != 0){
+            this.animationcolumn = 2;
+            this.totalFrames = 5;
+            return
+        }
+
+        else{
+            this.animationcolumn = 1
+            this.totalFrames = 5;
+            return;
+        }
+
+    }
+
+    //Draw Sprite
+    draw(){
+        //Hitbox
+        ctx.fillStyle = 'red'
+        //Attack Collider
+        ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
+        //Hitbox
+        ctx.fillStyle = 'black'
+        // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)
+        if (this.direction == -1) {
+            //This all essentially flips the image
+    
+            //Translates to the images position
+            ctx.translate(this.x,this.y);
+            
+            // scaleX by -1; this "trick" flips horizontally
+            ctx.scale(-1,1);
+            
+            // draw the img
+            // no need for x,y since we've already translated
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, -this.spriteWidth*1.25 /*Compensates for flip */, 0, this.spriteWidth*1.25, this.spriteHeight*1.25);
+            
+            // always clean up -- reset transformations to default
+            ctx.setTransform(1,0,0,1,0,0);
+        }
+        
+        else{
+            // Img Src, spritePositionX, spritePositionY, spriteWidth, spriteHeight, positionOnScreenX, positionOnScreenY, widthOnScreen, heightOnScreen
+            ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, this.x, this.y, this.spriteWidth*1.25, this.spriteHeight*1.25);
+        }
     }
 }

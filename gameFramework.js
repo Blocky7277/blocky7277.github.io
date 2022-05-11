@@ -75,8 +75,8 @@ var splashState = false;
 var arrowkeybinds = true;
 
 //Assigning the player and CPU
-export var player = new characters.wizard(-100, 0, 8, true)
-export var cpu = new characters.windElemental(cWidth, 0, 5, false, -1)
+export var player = new characters.wizard(-100, 0, true)
+export var cpu = new characters.windElemental(cWidth, 0, false, -1)
 
 // Keycode Stuff
 var wasdKeys = [65, 68, 79, 80] // A, D, O, P
@@ -140,7 +140,7 @@ var charArray  = [
     new characters.wizard(),
     new characters.metalBender(),
     new characters.king(),
-    new characters.windElemental(),
+    new characters.monk(),
 ]
 
 //Array with each character for CPU
@@ -149,7 +149,7 @@ var cpuArray  = [
     new characters.wizard(),
     new characters.metalBender(),
     new characters.king(),
-    new characters.windElemental(),
+    new characters.monk(),
 ]
 
 function initialize(){
@@ -417,7 +417,6 @@ function updateCharacterSelectScreen(){
         player.updateXYFromCollider();
         player.isPlayer = true;
         var rand  = util.getRandIntBetween(-1, charArray.length);
-        console.log(rand);
         cpu = cpuArray[rand];
         cpu.spriteCollider.x = cWidth-cpu.spriteCollider.width;
         cpu.spriteCollider.y = 10
@@ -432,6 +431,7 @@ function drawCharacterSelectScreen(){
     ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight)
     ctx.fillStyle = '#322758';
     ctx.fillRect(0, cHeight*54/64, cWidth, cHeight)
+    //Draw all characters
     for (let i = 0; i < charArray.length; i++) {
         charArray[i].draw()
     }
@@ -470,6 +470,7 @@ function drawPlay(){
     cpu.draw()
     //Checks gameState then draws health bars
     if(gameState == 4){
+        cpuLogic.detectionBox.draw()
         ctx.fillStyle = 'black';
         ctx.fillRect(5, 5, cWidth/2-10, 50)
         ctx.fillRect(cWidth-5, 5, -cWidth/2+10, 50)
@@ -495,14 +496,14 @@ function updateEndScreen(){
             new characters.wizard(),
             new characters.metalBender(),
             new characters.king(),
-            new characters.windElemental(),
+            new characters.monk(),
         ]
         cpuArray  = [
             new characters.windElemental(),
             new characters.wizard(),
             new characters.metalBender(),
             new characters.king(),
-            new characters.windElemental(),
+            new characters.monk(),
         ]
         gameState = 0;
         gameEnd = false;
