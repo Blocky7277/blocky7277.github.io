@@ -1002,13 +1002,13 @@ export class king extends character {
             if(this.charFrame == this.totalFrames) {
                 if(this.currentAttack == 1){
                     //Attack cooldowns
-                    util.sleep(400).then(() =>{
+                    util.sleep(650).then(() =>{
                         this.canAttack1 = true;
                     })
                 }
                 if(this.currentAttack == 2){
                     //Attack cooldowns
-                    util.sleep(400).then(() =>{
+                    util.sleep(650).then(() =>{
                         this.canAttack2 = true;
                     })
                 }
@@ -1109,8 +1109,8 @@ export class monk extends character{
                 this.attackCollider.x = this.spriteCollider.x + this.spriteCollider.width
                 this.attackCollider.width = this.spriteCollider.width*1.8
             }
-            this.attackCollider.y = this.spriteCollider.y;
-            this.attackCollider.height = this.spriteCollider.height;
+            this.attackCollider.y = this.spriteCollider.y-20;
+            this.attackCollider.height = this.spriteCollider.height+20;
         }
         if(this.attackIntersects(cpu) && !cpu.koed) {
             cpu.charFrame = 0;
@@ -1231,7 +1231,7 @@ export class monk extends character{
         //Hitbox
         ctx.fillStyle = 'red'
         //Attack Collider
-        ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
+        // ctx.fillRect(this.attackCollider.x, this.attackCollider.y, this.attackCollider.width, this.attackCollider.height)
         //Hitbox
         ctx.fillStyle = 'black'
         // ctx.fillRect(this.spriteCollider.x, this.spriteCollider.y, this.spriteCollider.width, this.spriteCollider.height)

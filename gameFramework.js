@@ -70,6 +70,7 @@ var newkeys = [];
 //Game States 0: title screen, 1: settings, 2: instructions, 3: character select 3.5: cpu level select 4: play -1: lose, 5: win, .5: pause,
 var gameState = 0;
 var gameEnd = false;
+var cpuLvl = 1;
 export var gameFrame = 0;
 var splashState = false;
 var arrowkeybinds = true;
@@ -190,14 +191,13 @@ function gameUpdate() {
     //GAME UPDATE LOGIC
     gameFrame++
 
-    cpuLogic.CpuLevel1()
-
     //Gamestate Manager
     if(gameState == 0 && !splashState) updateTitleScreen()
     if(gameState == 0.5) updatePauseScreen()
     else if(gameState == 1) updateOptions()
     else if(gameState == 2) updateInstruction()
     else if(gameState == 3) updateCharacterSelectScreen()
+    else if(gameState == 3.5) updateCpuLvlSelectScreen()
     else if(gameState == 4) updatePlay()
     else if(gameState == 5 || gameState == -1) updateEndScreen()
     
@@ -223,7 +223,7 @@ function gameDraw(){
     if(gameState == 1) drawOptionsScreen()
     if(gameState == 2) drawInstructionScreen()
     if(gameState == 3) drawCharacterSelectScreen()
-    if(gameState == 3.5) drawCharacterSelectScreen()
+    if(gameState == 3.5) drawCpuLvlSelectScreen()
     if(gameState == 4) drawPlay()
     if(gameState == 5) drawWinScreen()
     if(gameState == -1) drawLoseScreen()
@@ -423,7 +423,7 @@ function updateCharacterSelectScreen(){
         cpu.updateXYFromCollider()
         cpu.direction = -1
         cpu.isPlayer = false;
-        gameState = 4;
+        gameState = 3.5;
     }
 }
 
@@ -442,12 +442,30 @@ function drawCharacterSelectScreen(){
     ctx.fillText('.................................................................Press  Enter  to  choose  a  character  (Press  ESC  to  go  back).................................................................', cWidth/2, cHeight/2+290)
 }
 
+function updateCpuLvlSelectScreen() {
+    if(cpuLvl > 1 && newkeys[37]) cpuLvl--
+    else if(cpuLvl < 5 && newkeys[39]) cpuLvl++
+    else if(newkeys[27]) gameState = 3;
+    else if(newkeys[13]) gameState = 4;
+}
+
+function drawCpuLvlSelectScreen() {
+    ctx.drawImage(titleBackground, 0, 0, cWidth, cHeight)
+    ctx.fillStyle = '#322758';
+    ctx.fillRect(0, cHeight*54/64, cWidth, cHeight)
+    ctx.font = '50px ArcadeClassic'
+    ctx.fillStyle = 'white'
+    ctx.fillText('<  ' + cpuLvl.toString() + '  >', cWidth/2, cHeight/2)
+    ctx.font = '20px ArcadeClassic'
+    ctx.fillText('Use Arrow Keys To Change CPU Lvl, Enter to Select, ESC to go Back', cWidth/2, cHeight/2+290)
+}
+
 function updatePlay(){
     //Pause
     if(newkeys[27]) gameState = .5;
     player.update()
     cpu.update()
-    cpu.attack1()
+    manageCPU()
     //Checks for victor then waits for KO animation and then ends
     if(player.health <= 0 && !gameEnd){
         util.sleep(3500).then(() => {
@@ -470,6 +488,7 @@ function drawPlay(){
     cpu.draw()
     //Checks gameState then draws health bars
     if(gameState == 4){
+        ctx.fillStyle = 'black';
         cpuLogic.detectionBox.draw()
         ctx.fillStyle = 'black';
         ctx.fillRect(5, 5, cWidth/2-10, 50)
@@ -552,6 +571,16 @@ function updatePauseScreen(){
         newkeys[13] = true;
         updateEndScreen()
     }
+}
+
+function manageCPU(){
+    cpuLogic.detectionBox.update()
+    cpuLogic.miniBox.update()
+    if(cpuLvl == 1) cpuLogic.cpuLevel1();
+    else if(cpuLvl == 2) cpu.Logic.cpuLevel2();
+    else if(cpuLvl == 3) cpuLogic.cpuLevel3();
+    else if(cpuLvl == 4) cpuLogic.cpuLevel4();
+    else if(cpuLvl == 5) cpuLogic.cpuLevel5();
 }
 
 initialize();
