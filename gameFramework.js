@@ -47,6 +47,7 @@ const map1 = {
     ground: cHeight-80, //Y- Coord CHeight - somthing
 }
 map1.image.src = map1.source;
+//Map 2 exists but didn't make the final cut
 const map2 = { 
     image: new Image(), 
     source: './backgrounds/landScape.jpg', //img
@@ -68,7 +69,7 @@ var curkeys = [];
 var newkeys = [];
 
 //Game States 0: title screen, 1: settings, 2: instructions, 3: character select 3.5: cpu level select 4: play -1: lose, 5: win, .5: pause,
-var gameState = 0;
+export var gameState = 0;
 var gameEnd = false;
 var cpuLvl = 1;
 export var gameFrame = 0;
@@ -131,7 +132,6 @@ var settingsOptions = [{
 }]
 
 //Character select stuff
-
 //Character they are hovering over
 var currChar = 0;
 
@@ -152,6 +152,24 @@ var cpuArray  = [
     new characters.king(),
     new characters.monk(),
 ]
+
+//SFX
+export var hurtSFX = new Audio('./sfx/hurt.wav')
+export var hurt2SFX = new Audio('./sfx/hurt2.wav')
+export var attackSFX = new Audio('./sfx/attack.wav')
+export var selectSFX = new Audio('./sfx/select.wav')
+export var jumpSFX = new Audio('./sfx/jump.wav') 
+var sfxVol = .5
+hurtSFX.maxVol = sfxVol
+hurt2SFX.maxVol = sfxVol
+attackSFX.maxVol = sfxVol
+selectSFX.maxVol = sfxVol
+jumpSFX.maxVol = sfxVol
+hurtSFX.volume = hurtSFX.maxVol
+hurt2SFX.volume = hurt2SFX.maxVol
+attackSFX.volume = attackSFX.maxVol
+selectSFX.volume = selectSFX.maxVol
+jumpSFX.volume = jumpSFX.maxVol
 
 function initialize(){
     //Disable image smoothing for crisper image scaling
@@ -290,7 +308,9 @@ function updateTitleScreen(){
         if(menuOptionNumber < 0) menuOptionNumber = 2;
     }
     else if(newkeys[13]) {
+        //Delay so you don't go to this screen and go right back to the menu
         util.sleep(20).then(() =>{
+            selectSFX.play()
             if(menuOptions[menuOptionNumber].number == 1) {gameState = 3}
             else if(menuOptions[menuOptionNumber].number == 2) {gameState = 1}
             else if(menuOptions[menuOptionNumber].number == 3) {gameState = 2;}
@@ -319,7 +339,9 @@ function updateInstruction(){
     player.updateTitle()
     cpu.updateTitle()
     //Return to home screen
-    if(newkeys[13]) gameState = 0;
+    if(!newkeys[13]) return 
+    gameState = 0;
+    selectSFX.play()
 }
 
 function drawInstructionScreen(){
@@ -349,7 +371,10 @@ function updateOptions(){
     player.updateTitle()
     cpu.updateTitle()
     //Return to home screen
-    if(newkeys[13]) gameState = 0;
+    if(newkeys[13]) {
+        gameState = 0;
+        selectSFX.play()
+    }
     //Choose a setting and change it if it can be changed
     else if(newkeys[40]) {
         settingsOptionNumber++
@@ -371,6 +396,11 @@ function updateOptions(){
     }
     // sfx.volume = sfx.maxVol*settingsOptions[1].value/10
     bgMusic.volume = bgMusic.maxVol*settingsOptions[2].value/10
+    hurtSFX.volume = hurtSFX.maxVol*settingsOptions[1].value/10
+    hurt2SFX.volume = hurt2SFX.maxVol*settingsOptions[1].value/10
+    attackSFX.volume = attackSFX.maxVol*settingsOptions[1].value/10
+    selectSFX.volume = selectSFX.maxVol*settingsOptions[1].value/10
+    jumpSFX.volume = jumpSFX.maxVol*settingsOptions[1].value/10
 }
 
 function drawOptionsScreen(){
@@ -411,6 +441,7 @@ function updateCharacterSelectScreen(){
     else if(newkeys[37] && currChar > 0) currChar--;
     else if(newkeys[39] && currChar < charArray.length-1) currChar++;
     else if(newkeys[13]) {
+        selectSFX.play()
         player = charArray[currChar];
         player.spriteCollider.x = 0;
         player.spriteCollider.y = 0;
@@ -446,7 +477,10 @@ function updateCpuLvlSelectScreen() {
     if(cpuLvl > 1 && newkeys[37]) cpuLvl--
     else if(cpuLvl < 5 && newkeys[39]) cpuLvl++
     else if(newkeys[27]) gameState = 3;
-    else if(newkeys[13]) gameState = 4;
+    else if(newkeys[13]){
+        selectSFX.play()
+        gameState = 4;
+    } 
 }
 
 function drawCpuLvlSelectScreen() {
@@ -489,7 +523,6 @@ function drawPlay(){
     //Checks gameState then draws health bars
     if(gameState == 4){
         ctx.fillStyle = 'black';
-        cpuLogic.detectionBox.draw()
         ctx.fillStyle = 'black';
         ctx.fillRect(5, 5, cWidth/2-10, 50)
         ctx.fillRect(cWidth-5, 5, -cWidth/2+10, 50)
@@ -508,6 +541,7 @@ function drawPlay(){
 function updateEndScreen(){
     //Reset the game
     if(newkeys[13]) {
+        selectSFX.play()
         player = new characters.wizard(-100, 0, 8, true)
         cpu = new characters.windElemental(cWidth, 0, 5, false, -1)
         charArray  = [
@@ -565,7 +599,10 @@ function drawPauseScreen(){
 
 function updatePauseScreen(){
     //Back to game
-    if(newkeys[13]) gameState = 4;
+    if(newkeys[13]) {
+        gameState = 4;
+        selectSFX.play()
+    }
     //Quit
     else if (newkeys[88]) { // X
         newkeys[13] = true;
@@ -577,7 +614,7 @@ function manageCPU(){
     cpuLogic.detectionBox.update()
     cpuLogic.miniBox.update()
     if(cpuLvl == 1) cpuLogic.cpuLevel1();
-    else if(cpuLvl == 2) cpu.Logic.cpuLevel2();
+    else if(cpuLvl == 2) cpuLogic.cpuLevel2();
     else if(cpuLvl == 3) cpuLogic.cpuLevel3();
     else if(cpuLvl == 4) cpuLogic.cpuLevel4();
     else if(cpuLvl == 5) cpuLogic.cpuLevel5();

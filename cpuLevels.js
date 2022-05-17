@@ -67,7 +67,6 @@ export function cpuLevel1() {
         }
         if(intersects(player)){
             let x = util.getRandIntBetween(0, 3)
-            console.log(x)
             if(x == 1) cpu.attack1()
             else cpu.attack2()
         }
@@ -94,7 +93,6 @@ export function cpuLevel2() {
         }
         if(intersects(player)){
             let x = util.getRandIntBetween(0, 3)
-            console.log(x)
             if(x == 1) cpu.attack1()
             else cpu.attack2()
         }
@@ -121,7 +119,6 @@ export function cpuLevel3() {
         }
         if(intersects(player)){
             let x = util.getRandIntBetween(0, 3)
-            console.log(x)
             if(x == 1) cpu.attack1()
             else cpu.attack2()
         }

@@ -1,5 +1,6 @@
-import { attackHandler, ctx, gameFrame, movementHandler, player, cpu } from "./gameFramework.js";
+import { attackHandler, ctx, gameFrame, movementHandler, player, cpu, gameState } from "./gameFramework.js";
 import * as util from "./utilityClassesAndFunctions.js";
+import { hurtSFX, hurt2SFX, attackSFX, jumpSFX } from './gameFramework.js' 
 
 const staggerFrame = 5;
 
@@ -126,6 +127,7 @@ class character{
         if(this.inAir) return;
         this.vel.y = -12;
         this.inAir = true
+        jumpSFX.play()
     }
     
     attackIntersects(obj){
@@ -196,28 +198,32 @@ export class wizard extends character {
     }
     
     attack1(){
-        // Damage of 10
         if(this.attacking || this.inAir || !this.canAttack1) return;
         this.currentAttack = 1;
         this.canAttack1 = false;
-        this.currentAttackDmg = 7;
+        // Damage of 15
+        this.currentAttackDmg = 15;
         this.damageFrame = 3;
         this.img.src = this.imgPath+'/Attack1.png';
         this.charFrame = 0;
         this.totalFrames = 7;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
     attack2(){
-        // Damage of 17
         if(this.attacking || this.inAir) return;
         this.currentAttack = 2;
-        this.currentAttackDmg = 12;
+        // Damage of 25
+        this.currentAttackDmg = 25;
         this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack2.png';
         this.charFrame = 0;
         this.damageFrame = 7;
         this.totalFrames = 7;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
     
     attackLogicPlayer(){
@@ -249,6 +255,7 @@ export class wizard extends character {
             cpu.charFrame = 0;
             cpu.health -= this.currentAttackDmg;
             cpu.attacked = true;
+            randomHurtSFX()
         }
     }
     attackLogicCPU(){
@@ -280,6 +287,7 @@ export class wizard extends character {
             player.charFrame = 0;
             player.health -= this.currentAttackDmg;
             player.attacked = true;
+            randomHurtSFX()
         }
     }
     
@@ -386,6 +394,8 @@ export class windElemental extends character{
             this.currentAttackDmg = 6;
             this.animationcolumn = 5
             this.totalFrames = 6;
+            if(gameState != 4) return
+            attackSFX.play()
         }
         else {
             // Damage of 15
@@ -408,6 +418,8 @@ export class windElemental extends character{
         this.charFrame = 0;
         this.totalFrames = 13;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
 
     attackLogicPlayer(){
@@ -451,6 +463,7 @@ export class windElemental extends character{
             cpu.charFrame = 0;
             cpu.health -= this.currentAttackDmg;
             cpu.attacked = true;
+            randomHurtSFX()
         }
     }
     attackLogicCPU(){
@@ -494,6 +507,7 @@ export class windElemental extends character{
             player.charFrame = 0;
             player.health -= this.currentAttackDmg;
             player.attacked = true;
+            randomHurtSFX()
         }
     }
     
@@ -501,6 +515,7 @@ export class windElemental extends character{
         if(this.inAir) return;
         this.vel.y = -15;
         this.inAir = true
+        jumpSFX.play()
     }
 
     animationUpdate(){
@@ -634,6 +649,8 @@ export class metalBender extends character{
         this.totalFrames = 7;
         this.charFrame = 0;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
     attack2(){
         // Damage of 17
@@ -646,6 +663,8 @@ export class metalBender extends character{
         this.charFrame = 0;
         this.totalFrames = 10;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
 
     attackLogicPlayer(){
@@ -677,6 +696,7 @@ export class metalBender extends character{
             cpu.charFrame = 0;
             cpu.health -= this.currentAttackDmg;
             cpu.attacked = true;
+            randomHurtSFX()
         }
     }
     attackLogicCPU(){
@@ -708,6 +728,7 @@ export class metalBender extends character{
             player.charFrame = 0;
             player.health -= this.currentAttackDmg;
             player.attacked = true;
+            randomHurtSFX()
         }
     }
     
@@ -715,6 +736,7 @@ export class metalBender extends character{
         if(this.inAir) return;
         this.vel.y = -12;
         this.inAir = true
+        jumpSFX.play()
     }
 
     animationUpdate(){
@@ -878,22 +900,24 @@ export class king extends character {
     }
     
     attack1(){
-        // Damage of 5
         if(this.attacking || this.inAir || !this.canAttack1) return;
         this.currentAttack = 1;
         this.canAttack1 = false;
+        // Damage of 5
         this.currentAttackDmg = 5;
         this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack1.png';
         this.charFrame = 0;
         this.totalFrames = 3;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
     attack2(){
-        // Damage of 8
         if(this.attacking || this.inAir || !this.canAttack2) return;
         this.currentAttack = 2;
         this.canAttack2 = false;
+        // Damage of 8
         this.currentAttackDmg = 8;
         this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack2.png';
@@ -901,6 +925,8 @@ export class king extends character {
         this.damageFrame = 2;
         this.totalFrames = 3;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
     
     attackLogicPlayer(){
@@ -932,6 +958,7 @@ export class king extends character {
             cpu.charFrame = 0;
             cpu.health -= this.currentAttackDmg;
             cpu.attacked = true;
+            randomHurtSFX()
         }
     }
     attackLogicCPU(){
@@ -963,6 +990,7 @@ export class king extends character {
             player.charFrame = 0;
             player.health -= this.currentAttackDmg;
             player.attacked = true;
+            randomHurtSFX()
         }
     }
     
@@ -1079,6 +1107,8 @@ export class monk extends character{
         this.totalFrames = 6;
         this.charFrame = 0;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
     attack2(){
         // Damage of 17
@@ -1091,6 +1121,8 @@ export class monk extends character{
         this.charFrame = 0;
         this.totalFrames = 13;
         this.attacking = true;
+        if(gameState != 4) return
+        attackSFX.play()
     }
 
     attackLogicPlayer(){
@@ -1116,6 +1148,7 @@ export class monk extends character{
             cpu.charFrame = 0;
             cpu.health -= this.currentAttackDmg;
             cpu.attacked = true;
+            randomHurtSFX()
         }
     }
     attackLogicCPU(){
@@ -1141,6 +1174,7 @@ export class monk extends character{
             player.charFrame = 0;
             player.health -= this.currentAttackDmg;
             player.attacked = true;
+            randomHurtSFX()
         }
     }
     
@@ -1148,6 +1182,7 @@ export class monk extends character{
         if(this.inAir) return;
         this.vel.y = -12;
         this.inAir = true
+        jumpSFX()
     }
 
     animationUpdate(){
@@ -1257,4 +1292,10 @@ export class monk extends character{
             ctx.drawImage(this.img, this.charFrame*this.spriteWidth, (this.animationcolumn-1)*this.spriteHeight, this.spriteWidth, this.spriteHeight, this.x, this.y, this.spriteWidth*1.25, this.spriteHeight*1.25);
         }
     }
+}
+
+function randomHurtSFX() {
+    var sfx = util.getRandIntBetween(-1, 2)
+    if(sfx == 0 ) hurtSFX.play
+    else hurt2SFX.play() 
 }
