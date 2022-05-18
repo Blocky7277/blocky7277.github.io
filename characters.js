@@ -1207,7 +1207,7 @@ export class monk extends character{
         }
         //Attacked Animations
         else if(this.attacked){
-            this.totalFrames = 4;
+            this.totalFrames = 3;
             this.animationcolumn = 13;
             if(this.charFrame == this.totalFrames) this.attacked = false;
             return

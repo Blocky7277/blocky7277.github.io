@@ -16,7 +16,7 @@ var songArray = [
     
     {
         src: './audio/SSBU.mp3',
-        vol: .4
+        vol: .55
     },
     
     {
