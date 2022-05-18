@@ -21,12 +21,12 @@ var songArray = [
     
     {
         src: './audio/BEP.mp3',
-        vol: .15
+        vol: .2
     },
     
     {
         src: './audio/TSBFT.mp3',
-        vol: .25
+        vol: .3
     }
 ]
 var currSong = util.getRandIntBetween(-1, songArray.length);
@@ -190,9 +190,9 @@ function initialize(){
         bgMusic.currentTime = 0;
         bgMusic.play()
         console.log("Next Song");
-   });
-
-   //Since the music only works if the user interacts with the browser I just prompt them to click
+    });
+    
+    //Since the music only works if the user interacts with the browser I just prompt them to click
     myCanvas.addEventListener('click', function() {
         bgMusic.play()
     })
@@ -203,12 +203,14 @@ function initialize(){
         
         window.requestAnimationFrame(gameUpdate);
     }
-
     
-function gameUpdate() {
+    
+    function gameUpdate() {
     //GAME UPDATE LOGIC
     gameFrame++
 
+    bgMusic.volume = bgMusic.maxVol*settingsOptions[2].value/10
+        
     //Gamestate Manager
     if(gameState == 0 && !splashState) updateTitleScreen()
     if(gameState == 0.5) updatePauseScreen()
@@ -395,7 +397,6 @@ function updateOptions(){
         if(settingsOptions[settingsOptionNumber].number == 3) {if(settingsOptions[settingsOptionNumber].value < 10)settingsOptions[settingsOptionNumber].value++}
     }
     // sfx.volume = sfx.maxVol*settingsOptions[1].value/10
-    bgMusic.volume = bgMusic.maxVol*settingsOptions[2].value/10
     hurtSFX.volume = hurtSFX.maxVol*settingsOptions[1].value/10
     hurt2SFX.volume = hurt2SFX.maxVol*settingsOptions[1].value/10
     attackSFX.volume = attackSFX.maxVol*settingsOptions[1].value/10

@@ -903,8 +903,8 @@ export class king extends character {
         if(this.attacking || this.inAir || !this.canAttack1) return;
         this.currentAttack = 1;
         this.canAttack1 = false;
-        // Damage of 5
-        this.currentAttackDmg = 5;
+        // Damage of 3
+        this.currentAttackDmg = 3;
         this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack1.png';
         this.charFrame = 0;
@@ -917,8 +917,8 @@ export class king extends character {
         if(this.attacking || this.inAir || !this.canAttack2) return;
         this.currentAttack = 2;
         this.canAttack2 = false;
-        // Damage of 8
-        this.currentAttackDmg = 8;
+        // Damage of 5
+        this.currentAttackDmg = 5;
         this.damageFrame = 2;
         this.img.src = this.imgPath+'/Attack2.png';
         this.charFrame = 0;
@@ -1182,7 +1182,7 @@ export class monk extends character{
         if(this.inAir) return;
         this.vel.y = -12;
         this.inAir = true
-        jumpSFX()
+        jumpSFX.play()
     }
 
     animationUpdate(){
@@ -1298,4 +1298,5 @@ function randomHurtSFX() {
     var sfx = util.getRandIntBetween(-1, 2)
     if(sfx == 0 ) hurtSFX.play
     else hurt2SFX.play() 
+    console.log(sfx)
 }
