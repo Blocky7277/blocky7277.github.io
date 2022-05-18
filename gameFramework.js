@@ -11,7 +11,7 @@ var bgMusic = new Audio();
 var songArray = [
     {
         src: './audio/SNA.mp3',
-        vol: .3
+        vol: .4
     },
     
     {
