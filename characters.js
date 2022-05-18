@@ -150,7 +150,7 @@ class character{
 export class wizard extends character {
     constructor(x, y, isPlayer, direction){
         super(x, y, isPlayer, direction);
-        this.maxHealth = 50;
+        this.maxHealth = 75;
         this.health = this.maxHealth;
         this.canAttack1 = true;
         this.imgPath = './sprites/mahonohito';
@@ -640,11 +640,11 @@ export class metalBender extends character{
     
     attack1(){
         if(this.attacking || !this.canAttack1) return;
-        // Damage of 15
+        // Damage of 10
         this.canAttack1 = false;
         this.currentAttack = 1;
-        this.currentAttackDmg = 10;
-        this.damageFrame = 4;
+        this.currentAttackDmg = 5;
+        this.damageFrame = 2;
         this.animationcolumn = 11;
         this.totalFrames = 7;
         this.charFrame = 0;
@@ -771,6 +771,7 @@ export class metalBender extends character{
             if(this.charFrame == this.damageFrame){
                 if(this.isPlayer) this.attackLogicPlayer()
                 else this.attackLogicCPU()
+                if(this.currentAttack == 1) this.damageFrame = 5;
             }
             if(this.charFrame == this.totalFrames) {
                 if(this.currentAttack == 1) {
@@ -1030,13 +1031,13 @@ export class king extends character {
             if(this.charFrame == this.totalFrames) {
                 if(this.currentAttack == 1){
                     //Attack cooldowns
-                    util.sleep(650).then(() =>{
+                    util.sleep(900).then(() =>{
                         this.canAttack1 = true;
                     })
                 }
                 if(this.currentAttack == 2){
                     //Attack cooldowns
-                    util.sleep(650).then(() =>{
+                    util.sleep(900).then(() =>{
                         this.canAttack2 = true;
                     })
                 }
