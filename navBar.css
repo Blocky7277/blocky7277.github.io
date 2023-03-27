@@ -87,22 +87,3 @@ a{
 .break{
     flex-basis: 100%;
 }
-
-.plchlder{
-    text-align: center;
-    font-family: Atmospheric;
-    font-size: 100px;
-    font-weight: 70;
-}
-
-.websiteContainer{
-    margin: 0;
-    display: flex;
-    flex:1;
-}
-
-h1{
-    font-family: Atmospheric;
-    margin:10px auto 0;
-    font-size: 4em;
-}
