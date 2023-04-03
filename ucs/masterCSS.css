@@ -1,0 +1,50 @@
+/* Font that looks nice */
+/* From: https://fontmeme.com/fonts/super-smash-font/ */
+/* Accessed on 3/10/23 */
+@font-face {
+    font-family: "ssbu";
+    src: url('./assets/fonts/ssbu.ttf')
+}
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%
+}
+
+
+
+body{
+    background: #1a1e24;
+    color: whitesmoke;
+    font-family: Noto Sans;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0px;
+}
+
+canvas{
+    display: flex;
+    background: whitesmoke;
+    border-radius: 10px;
+    /* border: .25em solid #8b8b8b; */
+    scale: 1;
+}
+
+#myCanvas{
+    /* Relative as possible so it works on many devices */
+    /* width: 46.875vw; */
+    /* height: 61.538461538vh; */
+    width:1200px;
+    height:600px;
+
+    scale:1.1
+}
+
+/*Original Dimensions: 1200x600*/
