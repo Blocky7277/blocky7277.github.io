@@ -42,8 +42,6 @@ var cLives = 3;
 
 var state = "title"
 
-var cpuLvl = 1
-
 const bg = new Image() 
 // Image of a platformer stage
 // Source: https://ansimuz.itch.io/bulkhead-walls-environment\
@@ -52,36 +50,18 @@ bg.src = "./assets/bulkhead-wallsx3.png"
 
 var titleOptionNum = 0
 var titleOptionArr = [{ 
-    number: 1, // Start
-    arrowOffset: -130,
-    height: -60,
+    text: "start",
+    state: "char_select",
+    arrowOffset: -120,
+    height: -45,
 }, 
 {
-    number: 2, // Options
-    arrowOffset: -160,
-    height: +50,
-}, 
-{
-    number: 3, // Instructions
-    arrowOffset: -210,
-    height: +170,
+    text: "instructions", 
+    state: "instructions",
+    arrowOffset: -220,  
+    height: +65,
 }]
 
-//Settings Screen Settings
-var settingsOptionNumber = 0
-var settingsOptions = [
-{
-    number: 1, // VOLUME MUSIC
-    arrowOffset: -190,
-    value: 10,
-    height: +50,
-}, 
-{
-    number: 2, // VOLUME SFX
-    arrowOffset: -210,
-    value: 10,
-    height: +170,
-}]
 
 /**
  * Function that draws text on the canvas.
@@ -154,7 +134,7 @@ function updateGameScreen() {
     }
     else if (!player.alive && player.lives != 0) {
         player.lives = 0
-        sleep(2000).then(() => {state = "game_over"})
+        state = "game_over"
     }
     
     if (!cpu.alive && cpu.lives-1 > 0) {
@@ -165,7 +145,7 @@ function updateGameScreen() {
     }
     else if (!cpu.alive && cpu.lives != 0) {
         cpu.lives = 0
-        sleep(2000).then(state = "game_over")
+        state = "game_over"
     }
 }
 
@@ -179,60 +159,22 @@ function updateInstructionScreen(){
 }
 
 /**
- * Updates the options screen
- */
-function updateOptionsScreen(){
-    //Return to home screen
-    if(newkeys[13] || newkeys[27]) {
-        state = "title";
-    }
-    // //Choose a setting and change it if it can be changed
-    // else if(newkeys[40]) {
-    //     settingsOptionNumber++
-    //     if(settingsOptionNumber > 2) settingsOptionNumber = 0;
-    // }
-    // else if(newkeys[38]) {
-    //     settingsOptionNumber--
-    //     if(settingsOptionNumber < 0) settingsOptionNumber = 2;
-    // }
-    // else if(newkeys[37]) {
-    //     if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = !arrowkeybinds;}
-    //     if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value > 0)settingsOptions[settingsOptionNumber].value--}
-    //     if(settingsOptions[settingsOptionNumber].number == 3) if(settingsOptions[settingsOptionNumber].value > 0){settingsOptions[settingsOptionNumber].value--}
-    // }
-    // else if(newkeys[39]) {
-    //     if(settingsOptions[settingsOptionNumber].number == 1) {arrowkeybinds = !arrowkeybinds;}
-    //     if(settingsOptions[settingsOptionNumber].number == 2) {if(settingsOptions[settingsOptionNumber].value < 10)settingsOptions[settingsOptionNumber].value++}
-    //     if(settingsOptions[settingsOptionNumber].number == 3) {if(settingsOptions[settingsOptionNumber].value < 10)settingsOptions[settingsOptionNumber].value++}
-    // }
-    // // sfx.volume = sfx.maxVol*settingsOptions[1].value/10
-    // hurtSFX.volume = hurtSFX.maxVol*settingsOptions[1].value/10
-    // hurt2SFX.volume = hurt2SFX.maxVol*settingsOptions[1].value/10
-    // attackSFX.volume = attackSFX.maxVol*settingsOptions[1].value/10
-    // selectSFX.volume = selectSFX.maxVol*settingsOptions[1].value/10
-    // jumpSFX.volume = jumpSFX.maxVol*settingsOptions[1].value/10
-}
-
-
-/**
  * Function that updates the title screen
 */
 function updateTitleScreen() {
     //Handles choosing an option on title screen
     if(newkeys[40]) {
         titleOptionNum++
-        if(titleOptionNum > 2) titleOptionNum = 0;
+        if(titleOptionNum > titleOptionArr.length-1) titleOptionNum = 0;
     }
     else if(newkeys[38]) {
         titleOptionNum--
-        if(titleOptionNum < 0) titleOptionNum = 2;
+        if(titleOptionNum < 0) titleOptionNum = titleOptionArr.length-1;
     }
     else if(newkeys[13]) {
         //Delay so you don't choose an option right when the state is changed
         sleep(20).then(() =>{
-            if(titleOptionArr[titleOptionNum].number == 1) state = "char_select"
-            else if(titleOptionArr[titleOptionNum].number == 2) state = "options"
-            else if(titleOptionArr[titleOptionNum].number == 3) state = "instructions";
+            state = titleOptionArr[titleOptionNum].state
         })
     }
 }
@@ -286,7 +228,6 @@ function updateGameOverScreen(){
 function drawGameScreen(){    
     ctx.drawImage(bg, 0, 0, cWidth, cHeight)
     
-    detectionBox.draw(ctx);
     player.draw(ctx);
     cpu.draw(ctx);
 
@@ -375,12 +316,12 @@ function drawTitleScreen() {
     ctx.drawImage(bg, 0, 0, cWidth, cHeight);
     
     drawText('Ultra Crush', cWidth/2, cHeight/2-250, 60)
-    drawText('Siblings', cWidth/2, cHeight/2-150, 60)
+        drawText('Siblings', cWidth/2, cHeight/2-150, 60)
     drawText('>', cWidth/2+titleOptionArr[titleOptionNum].arrowOffset, cHeight/2+titleOptionArr[titleOptionNum].height, 70)
-    drawText('start', cWidth/2, cHeight/2-45, 45)
-    drawText('options', cWidth/2, cHeight/2+65, 45)
-    drawText('how to play', cWidth/2, cHeight/2+175, 45)
-    drawText('Use  arrow  keys  to  move  and  enter  to  select', cWidth/2, cHeight/2+290, 17)
+    for (let i = 0; i < titleOptionArr.length; i++) {
+        drawText(titleOptionArr[i].text, cWidth/2, cHeight/2+titleOptionArr[i].height, 45)
+    }
+    drawText('Use arrow keys to move and enter to  select', cWidth/2, cHeight/2+290, 17)
 }
 
 /**
@@ -401,18 +342,6 @@ function drawInstructionScreen(){
     drawText('Whoever gets knocked off 3 times loses.', cWidth/2, cHeight/2+145, 23)
     drawText('Good  Luck  Have  Fun.', cWidth/2, cHeight/2+200, 23)
     drawText('Press  Enter  to  go  back', cWidth/2, cHeight/2+290, 17)
-}
-
-/**
- * Draws the options screen
- */
-function drawOptionsScreen(){
-    ctx.drawImage(bg, 0, 0, cWidth, cHeight);
-
-    ctx.fillStyle = 'rgba(0, 0, 0, .3)'
-    ctx.fillRect(0, 0, cWidth, cHeight)
-
-    drawText('Use arrow keys to navigate and press enter to go back.', cWidth/2, cHeight/2+290, 17)
 }
 
 function drawCharacterSelectScreen(){
@@ -457,7 +386,6 @@ function drawFrame() {
     ctx.clearRect(0, 0, cWidth, cHeight);
     if(state == "title") drawTitleScreen()
     else if (state == "instructions") drawInstructionScreen()
-    else if (state == "options") drawOptionsScreen()
     else if(state == "char_select") drawCharacterSelectScreen()
     else if(state == "game") drawGameScreen()
     else if(state == "game_over") drawGameOver()
@@ -470,7 +398,6 @@ function drawFrame() {
 function update() {
     if(state == "title") updateTitleScreen()
     else if (state == "instructions") updateInstructionScreen()
-    else if (state == "options") updateOptionsScreen()
     else if(state == "char_select") updateCharacterSelectScreen()
     else if(state == "game") updateGameScreen()
     else if(state == "game_over") updateGameOverScreen()

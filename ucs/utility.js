@@ -3,7 +3,7 @@
  * 
  * @param {Number} ms 
  * @param {Boolean} lg 
- * @returns 
+ * @returns resolved promise
  */
 export async function sleep(ms, lg=false){
     if(ms <= 0){
@@ -23,6 +23,7 @@ export async function sleep(ms, lg=false){
  * 
  * @param {Number} min 
  * @param {Number} max 
+ * @returns the random number
  */
 export function getRandInt(min, max) {
     min = Math.ceil(min);
@@ -32,7 +33,8 @@ export function getRandInt(min, max) {
 
 // Class that checks if the passed through interval has elapsed
 // Source: Teacher
-// Accessed 3/28/23
+// From: utilityClassesAndFunctions.js
+// Accessed: 3/28/23
 export class Timer{
     constructor(timeIntervalMS, enabled = true){
         this.oldTime = new Date();
@@ -44,6 +46,12 @@ export class Timer{
         this.enabled = enabled;
     }
 
+    /**
+     * Source: Teacher
+     * Accessed: 3/28/23
+     * From: utilityClassesAndFunctions.js
+     * @returns if the timer is ready
+     */
     isReady(){
         var curTime = new Date();
         var delta = curTime - this.oldTime;
