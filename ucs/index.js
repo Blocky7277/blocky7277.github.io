@@ -403,6 +403,7 @@ function update() {
     else if(state == "game_over") updateGameOverScreen()
 
 
+
     for (let i = 0; i < newkeys.length; i++) {
         newkeys[i] = false;
     }
@@ -436,6 +437,12 @@ function init() {
                 player.velocity[0] = 0;
             }
         })
+
+        window.addEventListener("keydown", function(e) {
+            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+                e.preventDefault();
+            }
+        }, false);
     
     
     //Imaging stuff so sprites scale smoothly and maintain their original look

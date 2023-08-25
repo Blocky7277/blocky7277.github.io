@@ -191,6 +191,12 @@ function initialize(){
         bgMusic.play()
         console.log("Next Song");
     });
+
+    window.addEventListener("keydown", function(e) {
+        if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+            e.preventDefault();
+        }
+    }, false);
     
     //Since the music only works if the user interacts with the browser I just prompt them to click
     myCanvas.addEventListener('click', function() {

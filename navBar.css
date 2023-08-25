@@ -25,6 +25,7 @@ body{
     margin: 0;
     flex-flow: column;
     display:flex;
+    justify-content: flex-start;
 }
 
 .home{
