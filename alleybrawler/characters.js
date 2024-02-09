@@ -398,10 +398,10 @@ export class windElemental extends character{
             attackSFX.play()
         }
         else {
-            // Damage of 15
+            // Damage of 15+6
             this.currentAttack = 1;
             this.currentAttackDmg = 15;
-            this.damageFrame = 4;
+            this.damageFrame = 3;
             this.animationcolumn = 8
             this.totalFrames = 15;
         }
@@ -426,11 +426,11 @@ export class windElemental extends character{
         if(this.currentAttack == 1){
             if(this.direction == -1) {
                 this.attackCollider.x = this.spriteCollider.x - this.spriteCollider.width*1.8;
-                this.attackCollider.width = this.spriteCollider.width*2.8
+                this.attackCollider.width = this.spriteCollider.width*1.6;
             }
             else if(this.direction == 1) {
                 this.attackCollider.x = this.spriteCollider.x;
-                this.attackCollider.width = this.spriteCollider.width*2.8;
+                this.attackCollider.width = this.spriteCollider.width*1.6;
             }
             this.attackCollider.y = this.spriteCollider.y;
             this.attackCollider.height = this.spriteCollider.height;  
@@ -550,6 +550,12 @@ export class windElemental extends character{
             if(this.charFrame == this.damageFrame){
                 if(this.isPlayer) this.attackLogicPlayer()
                 else this.attackLogicCPU()
+                if(this.currentAttack == 1) {
+                    this.currentAttackDmg = 0.5;
+                    if(this.charFrame < this.totalFrames){
+                        this.damageFrame++;
+                    }
+                }
             }
             if(this.charFrame == this.totalFrames) {
                 this.attacking = false;
