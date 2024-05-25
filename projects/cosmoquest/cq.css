@@ -1,0 +1,41 @@
+body{
+    margin: 0;
+    background: #1a1e24;
+    color: whitesmoke;
+    font-family: Noto Sans;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+}
+
+#unity-container{
+    display: flex;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 auto;
+}
+
+canvas{
+    display: flex;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+}
+
+.credits{
+    text-decoration: none;
+    color: forestgreen;
+}
+
+.credits:hover{
+    text-decoration: underline;
+    color: gold;
+}
