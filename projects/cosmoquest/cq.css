@@ -19,8 +19,10 @@ body{
     flex: 1 0 auto;
 }
 
-canvas{
+#unity-canvas{
     display: flex;
+    aspect-ratio: 16/9;
+    width: 84vw !important;
 }
 
 body{
