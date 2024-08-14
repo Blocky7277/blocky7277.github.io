@@ -1,0 +1,34 @@
+.project-grid{
+    display:grid;
+    margin: .5vw auto;
+    gap: .5vw;
+    width: calc(100% - 1vw);
+    height: calc(100% - 4vw);
+    grid-template-columns: repeat(3, 1fr);
+    /* grid-template-rows: repeat(3, 1fr); */
+    grid-auto-flow: row;
+}
+
+.project-container{
+    display:grid;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.project-container:hover{
+    background-color: #262c36;
+    
+}
+
+.project-container > p{
+    margin: 0
+}
+
+.project-icon{
+    justify-self: center;
+    width: 50%;
+}

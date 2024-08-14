@@ -20,7 +20,7 @@ body{
     background: #1a1e24;
     color: whitesmoke;
     font-family: Noto Sans;
-    width: 100vw;
+    width: max(100vw, 100%);
     height: 100vh;
     margin: 0;
     flex-flow: column;
@@ -30,14 +30,14 @@ body{
 
 .home{
     text-align: center;
-    width: 100%;
-    height: 6%;
+    width: 100vw;
+    height: 6vh;
     background: rgb(36, 36, 36);
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
     font-family: Atmospheric;
-    font-size: 1.5rem;
+    font-size: 1.5vw;
 }
 
 .home-option, .home-icon, .home-motto{
@@ -48,14 +48,17 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+    display: inherit;
+    color: inherit; 
+    text-decoration: none;
 }
 
 .home-motto{
     margin-left: auto;
-    margin-right: 10px;
+    margin-right: 1rem;
     font-family: Atmospheric;
-    font-size: 1rem;
-    letter-spacing: 3px;
+    /* font-size: 15%; */
+    letter-spacing: .2rem;
 }
 
 .icon{
@@ -77,12 +80,7 @@ body{
 
 .home-option:hover{
     background: #006400;
-}
-
-a{
-    display: inherit;
-    color: inherit; 
-    text-decoration: none;
+    border-radius: .2rem;
 }
 
 .break{
